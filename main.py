@@ -5,8 +5,8 @@ try:
 
     enable_js_msg = document.querySelector("#enable-js-message")
     js_only_content = document.querySelector("#js-only-content")
-    enable_js_msg.attributes.hidden = "hidden"
-    del js_only_content.attributes.hidden
+    enable_js_msg.setAttribute("hidden", "hidden")
+    js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
 
