@@ -16,5 +16,5 @@ try:
         my_text = input_text.value
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
 except BaseException as e:
-    window.reportError(f"Uncaught exception in line {e.__traceback__.tb_lineno} of {__file__}: {type(e).__name__}: {e}")
+    window.reportError(f"Uncaught exception in line {e.__traceback__.tb_lineno} of {__name__}: {type(e).__name__}: {e}")
     exit(1)
