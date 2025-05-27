@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width,initial-scale=1" />
-      <title>test</title>
-      <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css">
-      <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
-  </head>
-  <body>
-
-
-    <h1>Test site</h1>
-    <p>Press the button to generate a random number with some text</p>
-    <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
-    <button py-click="generate">Translate</button>
-    <div id="output">The python script is loading or is broken.</div>
-    <script type="py" src="./main.py" config="./pyscript.json"></script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>test</title>
+        <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css">
+        <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
+    </head>
+    <body>
+        <div class="enable-js-message">
+            <h1 id="js_msg1">Please enable JavaScript to access this page.</h1>
+            <h3 id="js_msg2">Attempting to load JavaScript and PyScript...</h3>
+        </div>
+        <div class="js-only-content" hidden="hidden">
+            <h1 id="Title">Test site</h1>
+            <p id="helptext">Press the button to generate a random number with some text</p>
+            <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
+            <button id="button1" py-click="generate">Translate</button>
+            <div id="output">The python script is loading or is broken.</div>
+        </div>
+        <script type="py" src="./main.py" config="./pyscript.json"></script>
+    </body>
 </html>
