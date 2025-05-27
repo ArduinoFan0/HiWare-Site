@@ -1,13 +1,17 @@
 from pyscript import document
 import random
 output_div = document.querySelector("#output")
+
+enable_js_msg = document.querySelector("#enable-js-message")
+js_only_content = document.querySelector("#js-only-content")
+del enable_js_msg
+del js_only_content.attributes.hidden
+
 output_div.innerText = "The Python script is running."
 js_content = document.body.children
-for element in js_content:
     if element.className == 'js-only-content':
         element.attributes.hidden = False
     elif element.className == 'enable-js-message':
-        del element
 def generate(event):
     global output_div
     input_text = document.querySelector("#text_1")
