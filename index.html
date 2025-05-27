@@ -12,11 +12,13 @@
             <h1>Please enable JavaScript to access this page.</h1>
             <h3>Attempting to load JavaScript and PyScript...</h3>
         </div>
-        <div id="js-only-content" hidden="hidden">
+        <div id="js-only-content">
             <h1 id="Title">Test site</h1>
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
-            <button id="button1" style="background-image: image('./button.png')" py-click="generate">Translate</button>
+            <button id="button1" style="background-color: transparent; border-color: transparent" py-click="generate">
+                <img id="button1_img" src="button1.png" width="100", height="20" alt="Button image">
+            </button>
             <div id="output">The python script is loading or is broken.</div>
         </div>
         <script type="py" src="./main.py" config="./pyscript.json"></script>

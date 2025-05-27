@@ -1,4 +1,4 @@
-from pyscript import document, window
+from pyscript import document, window, when
 try:
     import random
     output_div = document.querySelector("#output")
@@ -9,6 +9,17 @@ try:
     js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
+    @when('mousedown', '#button1')
+    def button1_press():
+        button1 = document.querySelector("#button1_img")
+        button1.setAttribute("src", "./button.png")
+
+
+    @when('mouseup', '#button1')
+    def button1_release():
+        button1 = document.querySelector("#button1_img")
+        button1.setAttribute("src", "./button1.png")
+
 
     def generate(event):
         global output_div
