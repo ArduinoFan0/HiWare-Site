@@ -5,8 +5,8 @@ try:
 
     enable_js_msg = document.querySelector("#enable-js-message")
     js_only_content = document.querySelector("#js-only-content")
-    enable_js_msg.attributes.hidden = True
-    js_only_content.attributes.hidden = False
+    enable_js_msg.attributes.hidden = "hidden"
+    del js_only_content.attributes.hidden
 
     output_div.innerText = "The Python script is running."
 
@@ -17,4 +17,3 @@ try:
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
 except BaseException as e:
     window.reportError(f"Uncaught exception in line {e.__traceback__.tb_lineno} of {__name__}: {type(e).__name__}: {e}")
-    exit(1)
