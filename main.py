@@ -12,13 +12,13 @@ try:
     @when('mousedown', '#button1')
     def button1_press():
         button1 = document.querySelector("#button1_img")
-        button1.setAttribute("src", "./button.png")
+        button1.setAttribute("src", "./button_pressed.png")
 
 
     @when('mouseup', '#button1')
     def button1_release():
         button1 = document.querySelector("#button1_img")
-        button1.setAttribute("src", "./button1.png")
+        button1.setAttribute("src", "./button.png")
 
 
     def generate(event):
