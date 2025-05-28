@@ -19,7 +19,7 @@ try:
             template_text.innerText = my_text.innerText
             clone = template.content.cloneNode(True)
             item.replaceWith(clone)
-    fill_from_template()
+    fill_from_template_button()
     output_div = document.querySelector("#output")
 
     enable_js_msg = document.querySelector("#enable-js-message")
