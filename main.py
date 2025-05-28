@@ -8,7 +8,10 @@ try:
         template = document.getElementById(template_name)
         clone = template.content.cloneNode(True)
         for i in range(amount):
-            item = buttons.item(i)
+            item = buttons.item(0)
+            my_text = item.getElementsByClassName("button-text").item(0)
+            template_text = clone.getElementsByClassName("button-text").item(0)
+            template_text.innerText = my_text.innerText
             item.replaceWith(clone)
     fill_from_template()
     output_div = document.querySelector("#output")
