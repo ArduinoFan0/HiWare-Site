@@ -12,7 +12,7 @@ try:
         for i in range(amount):
             item = buttons.item(0)
             my_json = item.innerText
-            my_jdict = json.decode(my_json)
+            my_jdict = json.loads(my_json)
             my_text = my_jdict["text"]
             width = my_jdict["wh"][0]
             height = my_jdict["wh"][1]
