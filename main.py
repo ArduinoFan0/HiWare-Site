@@ -1,7 +1,7 @@
 from pyscript import document, window, when
 debug = False
 try:
-    import random
+    import random, json
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
@@ -11,9 +11,14 @@ try:
 
         for i in range(amount):
             item = buttons.item(0)
-            my_text = item.innerText
+            my_json = item.innerText
+            my_jdict = json.decode(my_json)
+            my_text = my_jdict["text"]
+            width = my_jdict["wh"][0]
+            height = my_jdict["wh"][1]
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
+            button_container.setAttribute("style", f"width: {width}; height: {height};")
             button_actual = button_container.getElementsByClassName('button-actual').item(0)
             button_contents = button_actual.getElementsByClassName('button-contents').item(0)
             template_text = button_contents.getElementsByClassName("button-text").item(0)
