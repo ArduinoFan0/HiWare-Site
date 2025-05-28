@@ -46,6 +46,15 @@ try:
         my_text = input_text.value
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
 except BaseException as e:
-    if debug:
-        raise
-    window.reportError(f"Uncaught exception in line {e.__traceback__.tb_lineno} of {__name__}: {type(e).__name__}: {e}")
+    def on_exception(my_e):
+        import sys, traceback
+        def custom_excepthook(exc_type, exc_value, exc_tb):
+            # Format the traceback
+            tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+            # Log it to the browser console
+            window.reportError("Custom Uncaught Exception:\n" + tb_str)
+
+        # Set the custom handler
+        sys.excepthook = custom_excepthook
+        raise my_e
+    on_exception(e)
