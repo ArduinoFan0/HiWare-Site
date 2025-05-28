@@ -6,12 +6,13 @@ try:
         buttons = document.getElementsByClassName(placeholder_classname)
         amount = buttons.length
         template = document.getElementById(template_name)
-        clone = template.content.cloneNode(True)
+
         for i in range(amount):
             item = buttons.item(0)
-            my_text = item.getElementsByClassName("button-text").item(0)
+            my_text = item
             template_text = template.getElementsByClassName("button-text").item(0)
             template_text.innerText = my_text.innerText
+            clone = template.content.cloneNode(True)
             item.replaceWith(clone)
     fill_from_template()
     output_div = document.querySelector("#output")
