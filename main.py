@@ -2,7 +2,9 @@ from pyscript import document, window, when
 debug = False
 try:
     import random
-    def fill_from_template(template_name="button-template", placeholder_classname="button"):
+    def fill_from_template_button():
+        template_name = "button-template"
+        placeholder_classname = "button"
         buttons = document.getElementsByClassName(placeholder_classname)
         amount = buttons.length
         template = document.getElementById(template_name)
@@ -10,8 +12,11 @@ try:
         for i in range(amount):
             item = buttons.item(0)
             my_text = item
-            template_text = template.getElementsByClassName("button-text").item(0)
-            template_text.innerHTML = my_text.getHTML()
+            button_container = template.getElementsByClassName('button-container').item(0)
+            button_actual = button_container.getElementsByClassName('button-actual').item(0)
+            button_contents = button_actual.getElementsByClassName('button-contents').item(0)
+            template_text = button_contents.getElementsByClassName("button-text").item(0)
+            template_text.innerText = my_text.innerText
             clone = template.content.cloneNode(True)
             item.replaceWith(clone)
     fill_from_template()
