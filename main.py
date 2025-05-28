@@ -10,7 +10,7 @@ try:
         for i in range(amount):
             item = buttons.item(0)
             my_text = item.getElementsByClassName("button-text").item(0)
-            template_text = clone.getElementsByClassName("button-text").item(0)
+            template_text = template.getElementsByClassName("button-text").item(0)
             template_text.innerText = my_text.innerText
             item.replaceWith(clone)
     fill_from_template()
