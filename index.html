@@ -55,7 +55,9 @@
         </style>
         <template id="button-template">
             <div class="button-container">
-                <button class="button-actual" style="" py-click="generate">
+                <button class="button-actual" style="" py-click="run_script" custom-data='
+                {"name":"alertw","args":["Hello world"]}
+                '>
                 <div class="button-contents">
                     <img class="button-img" src="./button-default.png" alt="Button image">
                     <div class="button-text">
@@ -99,12 +101,19 @@
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
             <div class="button">
-                {"text":"Generate","wh":["70%", "69px"]}
+                {"text":"Generate","wh":["300px", "69px"],"on-click":"generate"}
             </div>
+            <div class="button">
+                {"text":"Hello World","wh":["600px", "69px"],"custom-data":{"name":"alert","args":["Hello world"]}}
+            </div>
+
+
 
             <div id="output">The python script is loading or is broken.</div>
         </div>
         <script type="py" src="./main.py" config="./pyscript.json"></script>
+        <script type="py" src="./alert.py" config="./pyscript.json" worker name="alertw"></script>
+
 
     </body>
 </html>

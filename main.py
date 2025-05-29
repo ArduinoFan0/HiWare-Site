@@ -5,6 +5,9 @@ try:
     import random, json, time
     from threading import Thread
     from js import setTimeout
+    my_workers = {}
+    for key, worker in workers.items():
+        my_workers[key] = await workers[key]
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
@@ -66,7 +69,14 @@ try:
                 button_image.setAttribute("src", my_jdict["img"])
             except KeyError:
                 pass
-
+            try:
+                button_actual.setAttribute("py-click", my_jdict["on-click"])
+            except KeyError:
+                pass
+            try:
+                button_actual.setAttribute("custom-data", json.dumps(str(my_jdict['custom-data']).replace("'", '"') ).strip('"').replace('\\', ''))
+            except KeyError:
+                pass
             template_text.innerText = my_text
 
             item.replaceWith(clone)
@@ -79,11 +89,23 @@ try:
     js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
-
-
-    def generate(event):
-        # Traverse up to button-container
-        current = event.target
+    def navigate_from_element(src_element, dests=[]):
+        try:
+            current = src_element
+            my_dests = dests.copy()
+            head = my_dests.pop(0)
+            while current and not current.classList.contains(head):
+                current = current.parentElement
+            #print(current.className if current is not None else "Error descending")
+            for dest in my_dests:
+                current = current.getElementsByClassName(dest)[0]
+            return current
+        except:
+            window.reportError(f"could not navigate from {src_element} to {dests}")
+            return None
+    @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
+    def animate_button(element):
+        current = element
         while current and not current.classList.contains("button-container"):
             current = current.parentElement
         print(current.className if current is not None else "Error descending")
@@ -93,10 +115,29 @@ try:
         print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-img")[0]
         print(current.className if current is not None else "Error descending")
-        if current:
-            flash_element(current)
+
+        nav = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
+        if nav:
+            flash_element(nav)
         else:
             window.reportError("Couldn't apply animation to requested element.")
+
+    def run_script(event):
+        button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
+        if button_actual:
+            data = button_actual.getAttribute("custom-data")
+            jdata = json.loads(data)
+            try:
+                function_name = jdata["func"]
+                function = getattr(my_workers[jdata['name']], function_name)
+                function(*jdata['args'])
+            except (KeyError, TypeError, AttributeError):
+                my_workers[jdata['name']].run(*jdata['args'])
+
+    def generate(event):
+        # Traverse up to button-container
+        current = event.target
+        #animate_button(current)
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
