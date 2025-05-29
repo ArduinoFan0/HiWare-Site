@@ -55,7 +55,7 @@
         </style>
         <template id="button-template">
             <div class="button-container">
-                <button class="button-actual" style="" py-click="generate">
+                <button class="button-actual" style="" py-click="generate" py-click="basic_button_click">
                 <div class="button-contents">
                     <img class="button-img" src="./button-default.png" alt="Button image">
                     <div class="button-text">
@@ -109,5 +109,7 @@
             <div id="output">The python script is loading or is broken.</div>
         </div>
         <script type="py" src="./main.py" config="./pyscript.json"></script>
+        <script type="py" src="./animat.py" config="./pyscript.json" worker name="animation-worker"></script>
+
     </body>
 </html>

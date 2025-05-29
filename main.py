@@ -1,4 +1,4 @@
-from pyscript import document, window, when
+from pyscript import document, window, when, workers
 debug = False
 try:
     import random, json, time
@@ -62,16 +62,9 @@ try:
     js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
-    def basic_click_button(event):
-        clicked_element = event.target
-        def anim(elem):
-            for i in range(50):
-                elem.style.filter = f"brightness({i + 50}%);"
-                time.sleep(0.01)
-        anim_thread = Thread(target=anim, args=(clicked_element,))
-        anim_thread.start()
+    animator = await workers["animation-worker"]
     def generate(event):
-        basic_click_button(event)
+        animator.basic_click_button(event)
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
