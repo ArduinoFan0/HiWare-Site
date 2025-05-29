@@ -1,6 +1,8 @@
 import copy
 from pyscript import document, window, when, workers, ffi, PyWorker
 debug = False
+class hbmckshb():
+    pass
 try:
     import random, json, time, hashlib
     from threading import Thread
@@ -56,8 +58,8 @@ try:
                 else:
                     el.style = old_style
             proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
-            setattr(globals, proxy_handle, ffi.create_proxy(frame))
-            setTimeout(getattr(globals, proxy_handle), interval * i)
+            setattr(hbmckshb, proxy_handle, ffi.create_proxy(frame))
+            setTimeout(getattr(hbmckshb, proxy_handle), interval * i)
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
