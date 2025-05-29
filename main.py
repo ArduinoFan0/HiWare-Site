@@ -36,7 +36,7 @@ try:
         });
     '''
     def animate(el, keyframes:list, options:dict):
-        my_keyframes = copy.deepcopy(keyframes)
+        my_keyframes = keyframes
         my_keyframes.append({})
         old_style = el.style
         duration = options['duration']
