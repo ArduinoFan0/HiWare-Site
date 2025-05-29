@@ -130,7 +130,7 @@ try:
             try:
                 function_name = jdata["func"]
                 function = getattr(workers[jdata['name']], function_name)
-                await function(*jdata['args'])
+                function(*jdata['args'])
             except (KeyError, TypeError, AttributeError):
                 await workers[jdata['name']].run(*jdata['args'])
 
