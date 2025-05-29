@@ -139,7 +139,7 @@ try:
         function = globals()[function_name]
         await function(event)
     #@when("click", ".button-actual")
-    start_worker("./alert.py", "testworker")
+    await start_worker("./alert.py", "testworker")
     async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
         if not button_actual:
