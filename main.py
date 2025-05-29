@@ -49,14 +49,15 @@ try:
             on_start = bool(i == 0)
             on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
-            def frame(_keyframe, _endpoint):
+            def frame(_keyframe=keyframe, _endpoint=on_endpoint):
                 if True:
                     el.style.transition = f"{list(_keyframe.keys())[0]} {interval if not _endpoint else 0}ms linear"
                     setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
                 else:
                     el.style = old_style
-            frame_proxy = ffi.create_proxy(frame)
-            setTimeout(frame_proxy, interval * i, keyframe, on_endpoint)
+            proxy_handle = hashlib.md5(time.time_ns(), usedforsecurity=False)
+            setattr(globals, proxy_handle, ffi.create_proxy(frame))
+            setTimeout(getattr(globals, proxy_handle), interval * i)
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
