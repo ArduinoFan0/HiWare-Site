@@ -55,7 +55,7 @@ try:
                     setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
                 else:
                     el.style = old_style
-            proxy_handle = hashlib.md5(time.time_ns(), usedforsecurity=False)
+            proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False)
             setattr(globals, proxy_handle, ffi.create_proxy(frame))
             setTimeout(getattr(globals, proxy_handle), interval * i)
     def flash_element(el):
