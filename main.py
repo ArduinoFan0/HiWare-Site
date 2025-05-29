@@ -6,8 +6,8 @@ try:
     from threading import Thread
     from js import setTimeout
     my_workers = {}
-    for key, worker in dict(workers).items():
-        my_workers[key] = await workers[key]
+    #for key, worker in dict(workers).items():
+        #my_workers[key] = await workers[key]
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
@@ -129,10 +129,10 @@ try:
             jdata = json.loads(data)
             try:
                 function_name = jdata["func"]
-                function = getattr(my_workers[jdata['name']], function_name)
-                function(*jdata['args'])
+                function = getattr(workers[jdata['name']], function_name)
+                await function(*jdata['args'])
             except (KeyError, TypeError, AttributeError):
-                my_workers[jdata['name']].run(*jdata['args'])
+                await workers[jdata['name']].run(*jdata['args'])
 
     def generate(event):
         # Traverse up to button-container
