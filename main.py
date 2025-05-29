@@ -44,8 +44,8 @@ try:
         num_frames = len(my_keyframes)
         interval = duration/num_frames
         for i, keyframe in enumerate(my_keyframes):
-            on_start = i == 0
-            on_end = i == num_frames-1
+            on_start = bool(i == 0)
+            on_end = i == bool(num_frames-1)
             on_endpoint = bool(on_start or on_end)
             def frame():
                 if not on_end:
@@ -176,7 +176,7 @@ try:
             {"transform": "scale(100%)"},
             {"transform": "scale(90%) rotate(-10deg)"},
             {"transform": "scale(90%) rotate(10deg)"},
-            {"transform": "scale(100%) rotate(0deg)"},
+            {"transform": "scale(100%) rotate(0deg)"}
         ],{
             "duration": 300,
             "iterations": 1
