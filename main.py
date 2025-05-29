@@ -129,11 +129,11 @@ try:
             jdata = json.loads(data)
             try:
                 function_name = jdata["func"]
-                my_worker = await workers[jdata['name']]
+                my_worker = workers[jdata['name']]
                 function = getattr(my_worker, function_name)
                 function(*jdata['args'])
             except (KeyError, TypeError, AttributeError):
-                my_worker = await workers[jdata['name']]
+                my_worker = workers[jdata['name']]
                 my_worker.run(*jdata['args'])
 
     def generate(event):
