@@ -6,7 +6,8 @@ try:
     from threading import Thread
     from js import setTimeout
 
-
+    class Functions:
+        pass
     def flash_element(el):
         # Set the initial brightness
         el.style.filter = "brightness(50%)"
@@ -15,8 +16,10 @@ try:
         # Schedule brightness reset using JS setTimeout (non-blocking)
         def reset():
             el.style.filter = "brightness(100%)"#el.style.transition = "filter 0.0s ease-in-out"
-
-        setTimeout(copy.deepcopy(reset), 250)  # Delay in milliseconds
+        Functions.reset = reset
+        del reset
+        print(Functions.reset)
+        setTimeout(Functions.reset, 250)  # Delay in milliseconds
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
