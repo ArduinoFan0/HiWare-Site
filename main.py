@@ -145,11 +145,12 @@ try:
 
         try:
             function_name = jdata["func"]
-            my_worker = await get_worker(jdata['name'])
+            my_worker = await workers[jdata['name']]
             function = getattr(my_worker, function_name)
             await function(*jdata['args'])
-        except (KeyError, TypeError, AttributeError):
-            my_worker = await get_worker(jdata['name'])
+        except (KeyError, TypeError, AttributeError) as e:
+            window.reportError(f"exception occured: {type(e).__name__}: {e}")
+            my_worker = await workers[jdata['name']]
             await my_worker.run(*jdata['args'])
 
 
