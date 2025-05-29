@@ -5,3 +5,4 @@ def run(msg="None"):
     window.alert(msg)
 def alt_print(msg="None"):
     print(msg)
+__export__ = ["run", "alt_print"]
