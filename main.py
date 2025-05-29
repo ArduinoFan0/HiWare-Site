@@ -37,7 +37,7 @@ try:
     '''
     def animate(el, keyframes:list, options:dict):
         my_keyframes = keyframes
-        my_keyframes.append({})
+        #my_keyframes.append({})
         old_style = el.style
         duration = options['duration']
         iterations = options['iterations']
