@@ -15,8 +15,38 @@ try:
         my_workers[worker_name].terminate()
         my_workers.remove(worker_name)
 
-    #for key, worker in dict(workers).items():
-        #my_workers[key] = await workers[key]
+    '''
+        const
+        newspaperSpinning = [
+            {transform: "rotate(0) scale(1)"},
+            {transform: "rotate(360deg) scale(0)"},
+        ];
+    
+        const
+        newspaperTiming = {
+            duration: 2000,
+            iterations: 1,
+        };
+    
+        const
+        newspaper = document.querySelector(".newspaper");
+    
+        newspaper.addEventListener("click", () = > {
+            newspaper.animate(newspaperSpinning, newspaperTiming);
+        });
+    '''
+    def animate(el, keyframes:list, options:dict):
+        my_keyframes = []
+        duration = options['duration']
+        iterations = options['iterations']
+        num_frames = len(keyframes)
+        interval = duration/num_frames
+        for i, keyframe in enumerate(keyframes):
+            def frame():
+                el.style.transition = f"{keyframe.keys()[0]} {interval}ms linear"
+                setattr(el.style, f"{keyframe.keys()[0]}", f"{keyframe.values()[0]}")
+            frame_proxy = ffi.create_proxy(frame)
+            setTimeout(frame_proxy, interval * i)
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
@@ -133,7 +163,14 @@ try:
     @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     async def clicked_button(event):
         current = event.target
-        animate_button(current)
+        #animate_button(current)
+        animate(current, [
+            {"transform": "rotate(0turn)"},
+            {"transform": "rotate(360deg)"}
+        ],{
+            "duration": 1000,
+            "iterations": 1
+        })
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
         for i in range(300):
