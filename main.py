@@ -129,10 +129,12 @@ try:
             jdata = json.loads(data)
             try:
                 function_name = jdata["func"]
-                function = getattr(workers[jdata['name']], function_name)
+                my_worker = await workers[jdata['name']]
+                function = getattr(my_worker, function_name)
                 function(*jdata['args'])
             except (KeyError, TypeError, AttributeError):
-                await workers[jdata['name']].run(*jdata['args'])
+                my_worker = await workers[jdata['name']]
+                my_worker.run(*jdata['args'])
 
     def generate(event):
         # Traverse up to button-container
