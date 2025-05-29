@@ -41,10 +41,10 @@ try:
         old_style = el.style
         duration = options['duration']
         iterations = options['iterations']
-        num_frames = len(my_keyframes)
+        num_frames = len(keyframes)
         interval = round(duration/num_frames)
         i = -1
-        for keyframe in my_keyframes:
+        for keyframe in keyframes:
             i += 1
             on_start = bool(i == 0)
             on_end = bool(i == num_frames-1)
