@@ -67,9 +67,7 @@ try:
     def generate(event):
         # Traverse up to button-container
         current = event.target
-        while current and not current.classList.contains("button-container"):
-            current = current.parentElement
-
+        current = current.getElementsByClassName("button-img")[0]
         if current:
             current.animate([
                 {"filter": "brightness(50%)"},
@@ -78,7 +76,8 @@ try:
                 "duration": 500,
                 "iterations": 1
             })
-
+        else:
+            window.reportError("Couldn't apply animation to requested element.")
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
