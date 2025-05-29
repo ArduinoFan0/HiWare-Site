@@ -70,7 +70,8 @@ try:
             {"filter":"brightness(100%)"}
         ],
             {
-                "duration": 500
+                "duration": 500,
+                "iterations": 1
             })
         global output_div
         input_text = document.querySelector("#text_1")

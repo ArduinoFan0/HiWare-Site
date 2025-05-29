@@ -35,7 +35,8 @@
                 width: inherit;
                 height: inherit;
                 position:relative;
-                right:50%
+                right:50%;
+                filter:brightness(100%);
             }
             .button-img {
                 position: sticky; top: 0%; left: 0%; z-index: 0; width: inherit; height: inherit; filter: inherit;
@@ -56,7 +57,7 @@
         </style>
         <template id="button-template">
             <div class="button-container">
-                <button class="button-actual" style="" py-click="generate" py-click="basic_button_click">
+                <button class="button-actual" style="" py-click="generate">
                 <div class="button-contents">
                     <img class="button-img" src="./button-default.png" alt="Button image">
                     <div class="button-text">
