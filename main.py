@@ -69,10 +69,13 @@ try:
         current = event.target
         while current and not current.classList.contains("button-container"):
             current = current.parentElement
-        print(current.className)
+        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-actual")[0]
+        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-contents")[0]
+        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-img")[0]
+        print(current.className if current is not None else "Error descending")
         if current:
             current.animate([
                 {"filter": "brightness(50%)"},
