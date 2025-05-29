@@ -64,7 +64,7 @@ try:
     output_div.innerText = "The Python script is running."
     animator = await workers["animation-worker"]
     def generate(event):
-        async def anim(): await animator.basic_click_button(event)
+        async def anim(): animator.basic_click_button(event)
         anim()
         global output_div
         input_text = document.querySelector("#text_1")
