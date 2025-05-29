@@ -42,8 +42,10 @@ try:
         duration = options['duration']
         iterations = options['iterations']
         num_frames = len(my_keyframes)
-        interval = duration/num_frames
-        for i, keyframe in enumerate(my_keyframes):
+        interval = round(duration/num_frames)
+        i = -1
+        for keyframe in my_keyframes:
+            i += 1
             on_start = bool(i == 0)
             on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
