@@ -36,15 +36,23 @@ try:
         });
     '''
     def animate(el, keyframes:list, options:dict):
-        my_keyframes = []
+        my_keyframes = keyframes.copy()
+        my_keyframes.append({})
+        old_style = copy.deepcopy(el.style)
         duration = options['duration']
         iterations = options['iterations']
-        num_frames = len(keyframes)
+        num_frames = len(my_keyframes)
         interval = duration/num_frames
-        for i, keyframe in enumerate(keyframes):
+        for i, keyframe in enumerate(my_keyframes):
+            on_start = i == 0
+            on_end = i == num_frames-1
+            on_endpoint = bool(on_start or on_end)
             def frame():
-                el.style.transition = f"{list(keyframe.keys())[0]} {interval}ms linear"
-                setattr(el.style, f"{list(keyframe.keys())[0]}", f"{list(keyframe.values())[0]}")
+                if not on_end:
+                    el.style.transition = f"{list(keyframe.keys())[0]} {interval if not on_endpoint else 0}ms linear"
+                    setattr(el.style, f"{list(keyframe.keys())[0]}", f"{list(keyframe.values())[0]}")
+                else:
+                    el.style = old_style
             frame_proxy = ffi.create_proxy(frame)
             setTimeout(frame_proxy, interval * i)
     def flash_element(el):
@@ -165,10 +173,12 @@ try:
         current = event.target
         #animate_button(current)
         animate(current, [
-            {"transform": "rotate(0turn)"},
-            {"transform": "rotate(360deg)"}
+            {"transform": "scale(100%)"},
+            {"transform": "scale(90%) rotate(-10deg)"},
+            {"transform": "scale(90%) rotate(10deg)"},
+            {"transform": "scale(100%) rotate(0deg)"},
         ],{
-            "duration": 1000,
+            "duration": 300,
             "iterations": 1
         })
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
