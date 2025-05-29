@@ -52,7 +52,7 @@ try:
             on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
             def frame(_keyframe=keyframe, _endpoint=on_endpoint):
-                if not on_end:
+                if True:
                     el.style.transition = f"{list(_keyframe.keys())[0]} {interval if not _endpoint else 0}ms linear"
                     setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
                 else:
