@@ -8,12 +8,7 @@ try:
             for i in range(50):
                 elem.style.filter = f"brightness({i + 50}%);"
                 time.sleep(0.01)
-        clicked_element.animate({
-            "filter": ["brightness(50%)", "brightness(100%)"]
-        },
-            {
-                "duration": 500
-            })
+
 except BaseException as e:
     raise e
     def on_exception(my_e):

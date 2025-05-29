@@ -64,8 +64,13 @@ try:
     output_div.innerText = "The Python script is running."
     animator = await workers["animation-worker"]
     def generate(event):
-        async def anim(): animator.basic_click_button(event)
-        anim()
+        clicked_element = event.target
+        clicked_element.animate({
+            "filter": ["brightness(50%)", "brightness(100%)"]
+        },
+            {
+                "duration": 500
+            })
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
