@@ -1,5 +1,5 @@
 import copy
-from pyscript import document, window, when, workers, ffi
+from pyscript import document, window, when, workers, ffi, PyWorker
 debug = False
 try:
     import random, json, time
@@ -135,6 +135,7 @@ try:
         function = globals()[function_name]
         await function(event)
     #@when("click", ".button-actual")
+
     async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
         if not button_actual:
@@ -142,17 +143,19 @@ try:
 
         data = button_actual.getAttribute("custom-data")
         jdata = json.loads(data)
-
+        worker = PyWorker("./alert.py", type='pyodide')
+        await worker.ready
         try:
+
             function_name = jdata["func"]
-            my_worker = await workers[jdata['name']]
-            function = getattr(my_worker, function_name)
+            my_worker = worker
+            function = getattr(my_worker.sync, function_name)
             await function(*jdata['args'])
         except (KeyError, TypeError, AttributeError) as e:
             window.reportError(f"exception occured: {type(e).__name__}: {e}")
-            my_worker = await workers[jdata['name']]
-            await my_worker.run(*jdata['args'])
-
+            my_worker = worker
+            await my_worker.sync.run(*jdata['args'])
+        worker.terminate()
 
     async def generate(event):
         # Traverse up to button-container

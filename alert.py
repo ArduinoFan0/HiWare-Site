@@ -1,4 +1,4 @@
-from pyscript import document, window, when
+from pyscript import document, window, when, sync
 debug = False
 def run(msg="None"):
     import random, json, time
@@ -7,4 +7,5 @@ def alt_print(msg="None"):
     print(msg)
     output_div = document.querySelector("#output")
     output_div.innerText = msg
-__export__ = ["run", "alt_print"]
+sync.run = run
+sync.alt_print = alt_print
