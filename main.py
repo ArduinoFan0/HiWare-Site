@@ -60,12 +60,24 @@ try:
             proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
             setattr(hbmckshb, proxy_handle, ffi.create_proxy(frame))
             setTimeout(getattr(hbmckshb, proxy_handle), interval * i)
+
+
+    def brighten_element(el):
+        # Set the initial brightness
+        el.style.transition = "filter 0.06s ease-in-out"
+        el.style.filter = "brightness(150%)"
+
+
+    def normal_element(el):
+        # Set the initial brightness
+        el.style.transition = "filter 0.2s ease-in-out"
+        el.style.filter = "brightness(100%)"
+
+
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
         el.style.filter = "brightness(150%)"
-        #
-
 
         # Schedule brightness reset using JS setTimeout (non-blocking)
         def after_init():
@@ -155,7 +167,7 @@ try:
         except:
             window.reportError(f"could not navigate from {src_element} to {dests}")
             return None
-    def animate_button(element):
+    def animate_button(element, mode="flash"):
         current = element
         while current and not current.classList.contains("button-container"):
             current = current.parentElement
@@ -169,18 +181,29 @@ try:
 
         nav = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
         if nav:
-            flash_element(nav)
+            match mode:
+                case "flash":
+                    flash_element(nav)
+                case "brighten":
+                    brighten_element(nav)
+                case "normal":
+                    normal_element(nav)
         else:
             window.reportError("Couldn't apply animation to requested element.")
-
+    @when("mouseenter", ".button-actual")
+    async def hovered(event):
+        animate_button(event.target, "brighten")
+    @when("mouseleave", ".button-actual")
+    async def hover_gone(event):
+        animate_button(event.target, "normal")
     @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     async def clicked_button(event):
         current = event.target
-        animate_button(current)
+        #animate_button(current)
         animate(current, [
             {"transform": "scale(100%)"},
-            {"transform": "scale(90%) rotate(-10deg)"},
-            {"transform": "scale(90%) rotate(10deg)"},
+            {"transform": "scale(90%) rotate(0deg)"},
+            {"transform": "scale(90%) rotate(0deg)"},
             {"transform": "scale(100%) rotate(0deg)"}
         ],{
             "duration": 300,
