@@ -6,7 +6,7 @@ try:
     from threading import Thread
     from js import setTimeout
     my_workers = {}
-    for key, worker in dict(await workers).items():
+    for key, worker in dict(workers).items():
         my_workers[key] = await workers[key]
     def flash_element(el):
         # Set the initial brightness
