@@ -1,3 +1,4 @@
+import copy
 from pyscript import document, window, when, workers
 debug = False
 try:
@@ -10,12 +11,12 @@ try:
         # Set the initial brightness
         el.style.filter = "brightness(50%)"
         el.style.transition = "filter 0.25s ease-in-out"
-        el.style.filter = "brightness(100%)"
+
         # Schedule brightness reset using JS setTimeout (non-blocking)
         def reset():
-            el.style.transition = "filter 0.0s ease-in-out"
+            el.style.filter = "brightness(100%)"#el.style.transition = "filter 0.0s ease-in-out"
 
-        setTimeout(reset, 250)  # Delay in milliseconds
+        setTimeout(copy.deepcopy(reset), 250)  # Delay in milliseconds
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
