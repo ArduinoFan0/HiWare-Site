@@ -62,8 +62,28 @@ try:
     js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
-    animator = await workers["animation-worker"]
+
+
     def generate(event):
+        # Traverse up to button-container
+        current = event.target
+        while current and not current.classList.contains("button-container"):
+            current = current.parentElement
+
+        if current:
+            current.animate([
+                {"filter": "brightness(50%)"},
+                {"filter": "brightness(100%)"}
+            ], {
+                "duration": 500,
+                "iterations": 1
+            })
+
+        global output_div
+        input_text = document.querySelector("#text_1")
+        my_text = input_text.value
+        output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
+    def generate_dep(event):
         clicked_element = event.target
         clicked_element.animate([
             {"filter":"brightness(50%)"},
