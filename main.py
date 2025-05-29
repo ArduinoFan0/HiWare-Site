@@ -52,10 +52,10 @@ try:
             on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
             def frame(_keyframe=keyframe, _endpoint=on_endpoint):
-                if True:
+                try:
                     el.style.transition = f"{list(_keyframe.keys())[0]} {interval if not _endpoint else 0}ms linear"
                     setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
-                else:
+                except IndexError:
                     el.style = old_style
             proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
             setattr(hbmckshb, proxy_handle, ffi.create_proxy(frame))
