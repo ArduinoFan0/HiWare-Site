@@ -2,7 +2,7 @@ import copy
 from pyscript import document, window, when, workers, ffi, PyWorker
 debug = False
 try:
-    import random, json, time
+    import random, json, time, hashlib
     from threading import Thread
     from js import setTimeout
 
