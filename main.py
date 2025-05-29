@@ -136,8 +136,13 @@ try:
         animate_button(current)
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
-        globals()
-        function = globals()[function_name]
+        while True:
+            try:
+                function = globals()[function_name]
+                time.sleep(0.1)
+                break
+            except KeyError:
+                pass
         await function(event)
     #@when("click", ".button-actual")
     await start_worker("./alert.py", "testworker")
@@ -159,8 +164,6 @@ try:
             window.reportError(f"exception occured: {type(e).__name__}: {e}")
             my_worker = worker
             await my_worker.sync.run(*jdata['args'])
-        worker.terminate()
-
     async def generate(event):
         # Traverse up to button-container
         current = event.target
