@@ -36,7 +36,7 @@ try:
         });
     '''
     def animate(el, keyframes:list, options:dict):
-        my_keyframes = keyframes.copy()
+        my_keyframes = copy.deepcopy(keyframes)
         my_keyframes.append({})
         old_style = el.style
         duration = options['duration']
@@ -45,7 +45,7 @@ try:
         interval = duration/num_frames
         for i, keyframe in enumerate(my_keyframes):
             on_start = bool(i == 0)
-            on_end = i == bool(num_frames-1)
+            on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
             def frame():
                 if not on_end:
