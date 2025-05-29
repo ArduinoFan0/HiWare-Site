@@ -26,7 +26,6 @@
                 position:relative;
                 left:50%;
                 top:0%;
-                text-color:white
             }
             .button-actual {
                 font-size: inherit;
@@ -46,7 +45,8 @@
                 bottom: 100%;
                 z-index: 1;
                 font-size: inherit;
-                height:1000px
+                height:1000px;
+                color:white;
             }
             .button-contents {
                 height: 100%; width: 100%; font-size: inherit
@@ -96,7 +96,7 @@
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
             <div class="button">
-                {"text":"Hello","wh":["100%", "200px"],"img":"./button-default.png","style":"text-color: red"}
+                {"text":"Hello","wh":["100%", "200px"],"img":"./button-default.png","text-style":"color: red"}
             </div>
             <div class="button">
                 {"text":"World","wh":["70%", "100px"],"img":"./button1.png"}

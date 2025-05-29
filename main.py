@@ -1,7 +1,8 @@
 from pyscript import document, window, when
 debug = False
 try:
-    import random, json
+    import random, json, time
+    from threading import Thread
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
@@ -27,12 +28,22 @@ try:
                         my_style = my_style + " "
             except KeyError:
                 my_style = ""
+            try:
+                my_tstyle = my_jdict["text-style"]
+                if not my_tstyle.endswith(";"):
+                    my_tstyle = my_tstyle + ";"
+                    if not my_tstyle.endswith(" "):
+                        my_tstyle = my_tstyle + " "
+            except KeyError:
+                my_tstyle = ""
+
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
-            button_container.setAttribute("style", f"{my_style}width: {width}; height: {height}; font-size: {font_size}; {my_style}")
+            button_container.setAttribute("style", f"width: {width}; height: {height}; font-size: {font_size};")
             button_actual = button_container.getElementsByClassName('button-actual').item(0)
             button_contents = button_actual.getElementsByClassName('button-contents').item(0)
             template_text = button_contents.getElementsByClassName("button-text").item(0)
+            template_text.setAttribute("style", f"{my_tstyle}{template_text.getAttribute("style")}{my_tstyle}")
             button_image = button_contents.getElementsByClassName("button-img").item(0)
             try:
                 button_image.setAttribute("src", my_jdict["img"])
@@ -51,19 +62,15 @@ try:
     js_only_content.removeAttribute('hidden')
 
     output_div.innerText = "The Python script is running."
-    @when('mousedown', '#button1')
-    def button1_press():
-        button1 = document.querySelector("#button1_img")
-        button1.setAttribute("src", "./button_pressed.png")
-
-
-    @when('mouseup', '#button1')
-    def button1_release():
-        button1 = document.querySelector("#button1_img")
-        button1.setAttribute("src", "./button.png")
-
-
+    def basic_click_button(event):
+        clicked_element = event.target
+        def anim(elem):
+            for i in range(50):
+                elem.style.filter = f"brightness({i + 50}%);"
+                time.sleep(0.01)
+        anim(clicked_element)
     def generate(event):
+        basic_click_button(event)
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
