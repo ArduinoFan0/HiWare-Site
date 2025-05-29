@@ -136,7 +136,7 @@ try:
         animate_button(current)
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
-        while True:
+        for i in range(30):
             try:
                 function = globals()[function_name]
                 time.sleep(0.1)
