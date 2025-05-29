@@ -65,9 +65,10 @@ try:
     animator = await workers["animation-worker"]
     def generate(event):
         clicked_element = event.target
-        clicked_element.animate({
-            "filter": ["brightness(50%)", "brightness(100%)"]
-        },
+        clicked_element.animate([
+            {"filter":"brightness(50%)"},
+            {"filter":"brightness(100%)"}
+        ],
             {
                 "duration": 500
             })
