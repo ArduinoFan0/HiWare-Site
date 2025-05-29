@@ -5,7 +5,9 @@ try:
     import random, json, time
     from threading import Thread
     from js import setTimeout
-    my_workers = {}
+    async def get_worker(worker_name:str):
+        my_worker = await workers[worker_name]
+        return my_worker
     #for key, worker in dict(workers).items():
         #my_workers[key] = await workers[key]
     def flash_element(el):
@@ -129,11 +131,11 @@ try:
             jdata = json.loads(data)
             try:
                 function_name = jdata["func"]
-                my_worker = workers[jdata['name']]
+                my_worker = get_worker(jdata['name'])
                 function = getattr(my_worker, function_name)
                 function(*jdata['args'])
             except (KeyError, TypeError, AttributeError):
-                my_worker = workers[jdata['name']]
+                my_worker = get_worker(jdata['name'])
                 my_worker.run(*jdata['args'])
 
     def generate(event):
