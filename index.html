@@ -20,7 +20,13 @@
                 left:0%
             }
             .button-container {
-                width: 100px; height: 90px; font-size: calc(90px - 10px); position:relative; left:50%; top:0%
+                width: 100px;
+                height: 90px;
+                font-size: calc(90px - 10px);
+                position:relative;
+                left:50%;
+                top:0%;
+                text-color:white
             }
             .button-actual {
                 font-size: inherit;
@@ -38,7 +44,6 @@
                 position: sticky;
                 left: 0%;
                 bottom: 100%;
-                color: white;
                 z-index: 1;
                 font-size: inherit;
                 height:1000px
@@ -51,7 +56,7 @@
             <div class="button-container">
                 <button class="button-actual" style="" py-click="generate">
                 <div class="button-contents">
-                    <img class="button-img" src="./button.png" alt="Button image">
+                    <img class="button-img" src="./button-default.png" alt="Button image">
                     <div class="button-text">
                         N!
                     </div>
@@ -91,11 +96,15 @@
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
             <div class="button">
-                {"text":"Hello","wh":["100%", "200px"]}
+                {"text":"Hello","wh":["100%", "200px"],"img":"./button-default.png","style":"text-color: red"}
             </div>
             <div class="button">
-                {"text":"World","wh":["70%", "100px"]}
+                {"text":"World","wh":["70%", "100px"],"img":"./button1.png"}
             </div>
+            <div class="button">
+                {"text":"Earth","wh":["70%", "100px"]}
+            </div>
+
             <div id="output">The python script is loading or is broken.</div>
         </div>
         <script type="py" src="./main.py" config="./pyscript.json"></script>

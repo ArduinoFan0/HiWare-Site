@@ -16,12 +16,29 @@ try:
             my_text = my_jdict["text"]
             width = my_jdict["wh"][0]
             height = my_jdict["wh"][1]
+            font_size = "0%"
+            if height.endswith("px"):
+                font_size = f"{int(height[:-2]) - 10}px"
+            try:
+                my_style = my_jdict["style"]
+                if not my_style.endswith(";"):
+                    my_style = my_style + ";"
+                    if not my_style.endswith(" "):
+                        my_style = my_style + " "
+            except KeyError:
+                my_style = ""
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
-            button_container.setAttribute("style", f"width: {width}; height: {height};")
+            button_container.setAttribute("style", f"{my_style}width: {width}; height: {height}; font-size: {font_size}; {my_style}")
             button_actual = button_container.getElementsByClassName('button-actual').item(0)
             button_contents = button_actual.getElementsByClassName('button-contents').item(0)
             template_text = button_contents.getElementsByClassName("button-text").item(0)
+            button_image = button_contents.getElementsByClassName("button-img").item(0)
+            try:
+                button_image.setAttribute("src", my_jdict["img"])
+            except KeyError:
+                pass
+
             template_text.innerText = my_text
 
             item.replaceWith(clone)
