@@ -3,6 +3,19 @@ debug = False
 try:
     import random, json, time
     from threading import Thread
+    from js import setTimeout
+
+
+    def flash_element(el):
+        # Set the initial brightness
+        el.style.filter = "brightness(50%)"
+        el.style.transition = "filter 0.25s ease-in-out"
+        el.style.filter = "brightness(100%)"
+        # Schedule brightness reset using JS setTimeout (non-blocking)
+        def reset():
+            el.style.transition = "filter 0.0s ease-in-out"
+
+        setTimeout(reset, 250)  # Delay in milliseconds
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
@@ -77,13 +90,7 @@ try:
         current = current.getElementsByClassName("button-img")[0]
         print(current.className if current is not None else "Error descending")
         if current:
-            current.animate([
-                {"filter": "brightness(50%)"},
-                {"filter": "brightness(100%)"}
-            ], {
-                "duration": 500,
-                "iterations": 1
-            })
+            flash_element(current)
         else:
             window.reportError("Couldn't apply animation to requested element.")
         global output_div
