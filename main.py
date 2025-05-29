@@ -5,9 +5,12 @@ try:
     import random, json, time
     from threading import Thread
     from js import setTimeout
-    async def get_worker(worker_name:str):
-        my_worker = await workers[worker_name]
-        return my_worker
+
+
+    async def get_worker(worker_name: str):
+        return await workers[worker_name]
+
+
     #for key, worker in dict(workers).items():
         #my_workers[key] = await workers[key]
     def flash_element(el):
@@ -72,7 +75,7 @@ try:
             except KeyError:
                 pass
             try:
-                button_actual.setAttribute("py-click", my_jdict["on-click"])
+                button_actual.setAttribute("custom-on-click", my_jdict["on-click"])
             except KeyError:
                 pass
             try:
@@ -105,7 +108,6 @@ try:
         except:
             window.reportError(f"could not navigate from {src_element} to {dests}")
             return None
-    @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     def animate_button(element):
         current = element
         while current and not current.classList.contains("button-container"):
@@ -124,22 +126,34 @@ try:
         else:
             window.reportError("Couldn't apply animation to requested element.")
 
-    def run_script(event):
+    @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
+    async def clicked_button(event):
+        current = event.target
+        animate_button(current)
+        button_actual = navigate_from_element(current, ["button-container", "button-actual"])
+        function_name = button_actual.getAttribute("custom-on-click")
+        function = globals()[function_name]
+        await function(event)
+    #@when("click", ".button-actual")
+    async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
-        if button_actual:
-            data = button_actual.getAttribute("custom-data")
-            jdata = json.loads(data)
-            try:
-                function_name = jdata["func"]
-                my_worker = get_worker(jdata['name'])
-                function = getattr(my_worker, function_name)
-                async def do_run(): await function(*jdata['args'])
-                do_run()
-            except (KeyError, TypeError, AttributeError):
-                my_worker = get_worker(jdata['name'])
-                async def do_run(): await my_worker.run(*jdata['args'])
-                do_run()
-    def generate(event):
+        if not button_actual:
+            return
+
+        data = button_actual.getAttribute("custom-data")
+        jdata = json.loads(data)
+
+        try:
+            function_name = jdata["func"]
+            my_worker = await get_worker(jdata['name'])
+            function = getattr(my_worker, function_name)
+            await function(*jdata['args'])
+        except (KeyError, TypeError, AttributeError):
+            my_worker = await get_worker(jdata['name'])
+            await my_worker.run(*jdata['args'])
+
+
+    async def generate(event):
         # Traverse up to button-container
         current = event.target
         #animate_button(current)

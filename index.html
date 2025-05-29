@@ -55,7 +55,8 @@
         </style>
         <template id="button-template">
             <div class="button-container">
-                <button class="button-actual" style="" py-click="run_script" custom-data='
+                <!-- previously used py-click="..." -->
+                <button class="button-actual" style="" custom-on-click="run_script" custom-data='
                 {"name":"alertw","args":["Hello world"]}
                 '>
                 <div class="button-contents">
