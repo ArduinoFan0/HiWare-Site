@@ -133,11 +133,12 @@ try:
                 function_name = jdata["func"]
                 my_worker = get_worker(jdata['name'])
                 function = getattr(my_worker, function_name)
-                function(*jdata['args'])
+                async def do_run(): await function(*jdata['args'])
+                do_run()
             except (KeyError, TypeError, AttributeError):
                 my_worker = get_worker(jdata['name'])
-                my_worker.run(*jdata['args'])
-
+                async def do_run(): await my_worker.run(*jdata['args'])
+                do_run()
     def generate(event):
         # Traverse up to button-container
         current = event.target

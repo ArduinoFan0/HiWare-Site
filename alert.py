@@ -1,9 +1,7 @@
 from pyscript import document, window, when
 debug = False
 def run(msg=None):
-    try:
-        import random, json, time
-        window.alert(msg)
-
-    except BaseException as e:
-        raise e
+    import random, json, time
+    window.alert(msg)
+def alt_print(msg=None):
+    print(msg)
