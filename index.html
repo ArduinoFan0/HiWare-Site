@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="" my_version="1">
     <head>
+        <noscript><style> .jsonly { display: none } </style></noscript>
         <script src="./mini-coi.js"></script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -82,12 +83,14 @@
         </div>
 
 
-
         <div id="enable-js-message" style="text-align:center">
-            <h1>Please enable JavaScript to access this page.</h1>
-            <h3>Attempting to load JavaScript and PyScript...</h3>
+            <noscript>
+                <h1>Please enable JavaScript to access this page.</h1>
+            </noscript>
+            <div class="jsonly">
+                <h3>Attempting to load JavaScript and PyScript...</h3>
+            </div>
         </div>
-
 
 
 
@@ -96,13 +99,7 @@
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
             <div class="button">
-                {"text":"Hello","wh":["50%", "200px"],"img":"./button-default.png","text-style":"color: red"}
-            </div>
-            <div class="button">
-                {"text":"World","wh":["70%", "100px"],"img":"./button.png"}
-            </div>
-            <div class="button">
-                {"text":"Earth","wh":["70%", "100px"]}
+                {"text":"Generate","wh":["70%", "69px"]}
             </div>
 
             <div id="output">The python script is loading or is broken.</div>
