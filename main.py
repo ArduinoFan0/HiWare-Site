@@ -6,10 +6,14 @@ try:
     from threading import Thread
     from js import setTimeout
 
-
-    async def get_worker(worker_name: str):
-        return await workers[worker_name]
-
+    my_workers = {}
+    async def start_worker(worker_path: str, worker_name: str):
+        worker = PyWorker(worker_path, type='pyodide')
+        await worker.ready
+        my_workers[worker_name] = worker
+    async def stop_worker(worker_name: str):
+        my_workers[worker_name].terminate()
+        my_workers.remove(worker_name)
 
     #for key, worker in dict(workers).items():
         #my_workers[key] = await workers[key]
@@ -135,7 +139,7 @@ try:
         function = globals()[function_name]
         await function(event)
     #@when("click", ".button-actual")
-
+    start_worker("./alert.py", "testworker")
     async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
         if not button_actual:
@@ -143,8 +147,7 @@ try:
 
         data = button_actual.getAttribute("custom-data")
         jdata = json.loads(data)
-        worker = PyWorker("./alert.py", type='pyodide')
-        await worker.ready
+        worker = my_workers["testworker"]
         try:
             #
             function_name = jdata["func"]
