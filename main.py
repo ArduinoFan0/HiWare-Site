@@ -1,11 +1,11 @@
 import copy
-from pyscript import document, window, when, workers
+from pyscript import document, window, when, workers, ffi
 debug = False
 try:
     import random, json, time
     from threading import Thread
     from js import setTimeout
-    pyscript.ffi.experimental_create_proxy = "auto"
+    ffi.experimental_create_proxy = "auto"
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
