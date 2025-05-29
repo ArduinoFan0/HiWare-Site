@@ -38,21 +38,21 @@ try:
         });
     '''
     def animate(el, keyframes:list, options:dict):
-        my_keyframes = keyframes
-        #my_keyframes.append({})
+        my_keyframes = keyframes.copy()
+        my_keyframes.append({})
         old_style = el.style
         duration = options['duration']
         iterations = options['iterations']
-        num_frames = len(keyframes)
+        num_frames = len(my_keyframes)
         interval = round(duration/num_frames)
         i = -1
-        for keyframe in keyframes:
+        for keyframe in my_keyframes:
             i += 1
             on_start = bool(i == 0)
             on_end = bool(i == num_frames-1)
             on_endpoint = bool(on_start or on_end)
             def frame(_keyframe=keyframe, _endpoint=on_endpoint):
-                if True:
+                if not on_end:
                     el.style.transition = f"{list(_keyframe.keys())[0]} {interval if not _endpoint else 0}ms linear"
                     setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
                 else:
@@ -176,7 +176,7 @@ try:
     @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     async def clicked_button(event):
         current = event.target
-        #animate_button(current)
+        animate_button(current)
         animate(current, [
             {"transform": "scale(100%)"},
             {"transform": "scale(90%) rotate(-10deg)"},
