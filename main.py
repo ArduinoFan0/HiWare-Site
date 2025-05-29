@@ -43,8 +43,8 @@ try:
         interval = duration/num_frames
         for i, keyframe in enumerate(keyframes):
             def frame():
-                el.style.transition = f"{keyframe.keys()[0]} {interval}ms linear"
-                setattr(el.style, f"{keyframe.keys()[0]}", f"{keyframe.values()[0]}")
+                el.style.transition = f"{list(keyframe.keys())[0]} {interval}ms linear"
+                setattr(el.style, f"{list(keyframe.keys())[0]}", f"{list(keyframe.values())[0]}")
             frame_proxy = ffi.create_proxy(frame)
             setTimeout(frame_proxy, interval * i)
     def flash_element(el):
@@ -173,6 +173,8 @@ try:
         })
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
+        def function(dummy):
+            pass
         for i in range(300):
             try:
                 function = globals()[function_name]
