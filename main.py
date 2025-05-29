@@ -68,7 +68,8 @@ try:
             for i in range(50):
                 elem.style.filter = f"brightness({i + 50}%);"
                 time.sleep(0.01)
-        anim(clicked_element)
+        anim_thread = Thread(target=anim, args=(clicked_element,))
+        anim_thread.start()
     def generate(event):
         basic_click_button(event)
         global output_div
