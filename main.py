@@ -38,7 +38,7 @@ try:
     def animate(el, keyframes:list, options:dict):
         my_keyframes = keyframes.copy()
         my_keyframes.append({})
-        old_style = copy.deepcopy(el.style)
+        old_style = el.style
         duration = options['duration']
         iterations = options['iterations']
         num_frames = len(my_keyframes)
@@ -183,8 +183,7 @@ try:
         })
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
-        def function(dummy):
-            pass
+        function = None
         for i in range(300):
             try:
                 function = globals()[function_name]
@@ -192,7 +191,8 @@ try:
                 break
             except KeyError:
                 pass
-        await function(event)
+        if function is not None:
+            await function(event)
     #@when("click", ".button-actual")
     await start_worker("./alert.py", "testworker")
     async def run_script(event):
