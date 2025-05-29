@@ -5,21 +5,26 @@ try:
     import random, json, time
     from threading import Thread
     from js import setTimeout
-
-    class Functions:
-        pass
+    pyscript.ffi.experimental_create_proxy = "auto"
     def flash_element(el):
         # Set the initial brightness
-        el.style.filter = "brightness(50%)"
-        el.style.transition = "filter 0.25s ease-in-out"
+        el.style.transition = "filter 0.06s ease-in-out"
+        el.style.filter = "brightness(150%)"
+        #
+
 
         # Schedule brightness reset using JS setTimeout (non-blocking)
         def reset():
-            el.style.filter = "brightness(100%)"#el.style.transition = "filter 0.0s ease-in-out"
-        Functions.reset = reset
-        del reset
-        print(Functions.reset)
-        setTimeout(Functions.reset, 250)  # Delay in milliseconds
+            pass
+        def after_init():
+            el.style.transition = "filter 0.2s ease-in-out"
+            el.style.filter = "brightness(100%)"
+        def after_init2():
+            pass
+        setTimeout(reset, 250)  # Delay in milliseconds
+        setTimeout(after_init, 60)  # Delay in milliseconds
+        setTimeout(after_init2, 2)  # Delay in milliseconds
+
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
