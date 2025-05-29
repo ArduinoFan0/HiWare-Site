@@ -136,6 +136,7 @@ try:
         animate_button(current)
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
         function_name = button_actual.getAttribute("custom-on-click")
+        globals()
         function = globals()[function_name]
         await function(event)
     #@when("click", ".button-actual")
