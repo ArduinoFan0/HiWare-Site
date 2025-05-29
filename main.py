@@ -146,7 +146,7 @@ try:
         worker = PyWorker("./alert.py", type='pyodide')
         await worker.ready
         try:
-
+            #
             function_name = jdata["func"]
             my_worker = worker
             function = getattr(my_worker.sync, function_name)
