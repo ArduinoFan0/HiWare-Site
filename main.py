@@ -67,6 +67,7 @@ try:
     def generate(event):
         # Traverse up to button-container
         current = event.target
+        print(current.className)
         current = current.getElementsByClassName("button-contents")[0]
         current = current.getElementsByClassName("button-img")[0]
         if current:
