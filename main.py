@@ -123,7 +123,8 @@ try:
 
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
-            button_container.setAttribute("style", f"width: {width}; height: {height}; font-size: {font_size};")
+            item_style = item.getAttribute("style")
+            button_container.setAttribute("style", f"width: {width}; height: {height}; font-size: {font_size}; {item_style}")
             button_actual = button_container.getElementsByClassName('button-actual').item(0)
             button_contents = button_actual.getElementsByClassName('button-contents').item(0)
             template_text = button_contents.getElementsByClassName("button-text").item(0)
