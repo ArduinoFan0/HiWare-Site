@@ -253,7 +253,7 @@ try:
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
-    async def music():
+    async def music(event):
         audio_obj = document.querySelector("#background-music")
         audio_obj.mute = not audio_obj.mute
 except BaseException as e:
