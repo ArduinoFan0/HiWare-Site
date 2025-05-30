@@ -199,14 +199,21 @@ try:
     @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     async def clicked_button(event):
         current = event.target
+        current = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
         #animate_button(current)
         animate(current, [
-            {"transform": "scale(100%)"},
-            {"transform": "scale(90%) rotate(0deg)"},
-            {"transform": "scale(90%) rotate(0deg)"},
-            {"transform": "scale(100%) rotate(0deg)"}
+            {"filter": "hue-rotate(90deg)"},
+            {"filter": "hue-rotate(80deg)"},
+            {"filter": "hue-rotate(70deg)"},
+            {"filter": "hue-rotate(60deg)"},
+            {"filter": "hue-rotate(50deg)"},
+            {"filter": "hue-rotate(40deg)"},
+            {"filter": "hue-rotate(30deg)"},
+            {"filter": "hue-rotate(20deg)"},
+            {"filter": "hue-rotate(10deg)"},
+            {"filter": "hue-rotate(0deg)"}
         ],{
-            "duration": 300,
+            "duration": 500,
             "iterations": 1
         })
         button_actual = navigate_from_element(current, ["button-container", "button-actual"])
@@ -249,16 +256,7 @@ try:
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
-    def generate_dep(event):
-        clicked_element = event.target
-        clicked_element.animate([
-            {"filter":"brightness(50%)"},
-            {"filter":"brightness(100%)"}
-        ],
-            {
-                "duration": 500,
-                "iterations": 1
-            })
+
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
