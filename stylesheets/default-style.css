@@ -1,0 +1,70 @@
+.header {
+    z-index: 100000000;
+    margin:0%;
+    width:100%;
+    height:100px;
+    background-color:#0000007f;
+    border-color=#ffffffff;
+    border-width:2px;
+    border-style: solid;
+    position:sticky;
+    top:0%;
+    left:0%;
+    padding:0px
+}
+.button-container {
+    width: 100px;
+    height: 90px;
+    font-size: calc(90px - 10px);
+    position:relative;
+    left:50%;
+    top:0%;
+
+}
+.button-actual {
+    font-size: inherit;
+    background-color: transparent;
+    border-color: transparent;
+    width: inherit;
+    height: inherit;
+    position:relative;
+    right:50%;
+}
+.button-img {
+    position: sticky; top: 0%; left: 0%; z-index: 0; width: inherit; height: inherit;
+}
+.button-text {
+    position: sticky;
+    left: 0%;
+    bottom: 100%;
+    z-index: 1;
+    font-size: inherit;
+    color:white;
+}
+.button-contents {
+    height: 100%; width: 100%; font-size: inherit;
+}
+.loading-icon {
+    animation: 2s linear 0s infinite loading-spin;
+}
+
+@keyframes loading-spin {
+    from {
+        /* pushes the sun down past the viewport */
+        transform: rotate(-360deg);
+    }
+    to {
+        /* returns the sun to its default position */
+        transform: rotate(0deg);
+    }
+}
+table,
+tr,
+thead,
+th {
+    height:inherit;
+    margin:0px;
+    padding: 0px 0px;
+    border-collapse: collapse;
+
+}

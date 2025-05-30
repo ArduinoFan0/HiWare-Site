@@ -260,6 +260,10 @@ try:
         audio_obj = document.querySelector("#background-music")
         audio_obj.volume = 0.5
     await config_music()
+    def hide(event):
+        element = event.target
+        element = navigate_from_element(element, ["settings"])
+        element.setAttribute("hidden", "true")
 except BaseException as e:
     def on_exception(my_e):
         import sys, traceback

@@ -7,78 +7,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>test</title>
         <link rel="icon" href="./favicon.png">
-        <style>
-            .header {
-                z-index: 999999999999;
-                margin:0%;
-                width:100%;
-                height:100px;
-                background-color:#0000007f;
-                border-color=#ffffffff;
-                border-width:2px;
-                border-style: solid;
-                position:sticky;
-                top:0%;
-                left:0%;
-                padding:0px
-            }
-            .button-container {
-                width: 100px;
-                height: 90px;
-                font-size: calc(90px - 10px);
-                position:relative;
-                left:50%;
-                top:0%;
-
-            }
-            .button-actual {
-                font-size: inherit;
-                background-color: transparent;
-                border-color: transparent;
-                width: inherit;
-                height: inherit;
-                position:relative;
-                right:50%;
-            }
-            .button-img {
-                position: sticky; top: 0%; left: 0%; z-index: 0; width: inherit; height: inherit;
-            }
-            .button-text {
-                position: sticky;
-                left: 0%;
-                bottom: 100%;
-                z-index: 1;
-                font-size: inherit;
-                color:white;
-            }
-            .button-contents {
-                height: 100%; width: 100%; font-size: inherit;
-            }
-            .loading-icon {
-                animation: 2s linear 0s infinite loading-spin;
-            }
-
-            @keyframes loading-spin {
-                from {
-                    /* pushes the sun down past the viewport */
-                    transform: rotate(-360deg);
-                }
-                to {
-                    /* returns the sun to its default position */
-                    transform: rotate(0deg);
-                }
-            }
-            table,
-            tr,
-            thead,
-            th {
-                height:inherit;
-                margin:0px;
-                padding: 0px 0px;
-                border-collapse: collapse;
-
-            }
-        </style>
+        <link rel="stylesheet" href="./stylesheets/default-style.css">
         <template id="button-template">
             <div class="button-container">
                 <!-- previously used py-click="..." -->
@@ -110,7 +39,7 @@
         </div>
         <div class="header">
             <span>
-                <a href="./index.html" style="align-content:start; position:relative; left:10px; top:10%; margin:0px;">
+                <a href="./index.html" style="cursor:pointer; align-content:start; position:relative; left:10px; top:10%; margin:0px;">
                     <img src="./logo.png" height="80%" style="">
                 </a>
             </span>
@@ -130,13 +59,43 @@
             <div class="jsonly">
                 <h3>Loading scripts...</h3>
                 <br>
-                <img src="./spinner.png" alt="loading..." class="loading-icon" height="64px">
+                <img src="/spinner.png" alt="loading..." class="loading-icon" height="64px">
             </div>
         </div>
 
 
 
         <div id="js-only-content" hidden style="text-align:center">
+            <div class="settings" id="settings-page-1" style="
+                background-color:#00000070;
+                width:100%;
+                height:100%;
+                position:fixed;
+                left:0px;
+                top:0px;
+                z-index:100000001;
+
+            ">
+                <div py-click="hide" style="
+                    background-color:#00a7;
+                    width:100%;
+                    height:100%;
+                    z-index:100000001;
+                    margin:0px;
+                    position:fixed;
+                "></div>
+                <div style="
+                    background-color:#444;
+                    width:calc(100% - 200px);
+                    height:calc(100% - 200px);
+                    z-index:100000002;
+                    position:fixed;
+                    margin:100px;
+                ">
+                    Welcome
+                </div>
+
+            </div>
             <h1 id="Title">Test site</h1>
             <p id="helptext">Press the button to generate a random number with some text</p>
             <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
