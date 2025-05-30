@@ -256,6 +256,10 @@ try:
     async def music(event):
         audio_obj = document.querySelector("#background-music")
         audio_obj.muted = not audio_obj.muted
+    async def config_music():
+        audio_obj = document.querySelector("#background-music")
+        audio_obj.volume = 0.5
+    await config_music()
 except BaseException as e:
     def on_exception(my_e):
         import sys, traceback
