@@ -171,13 +171,9 @@ try:
         current = element
         while current and not current.classList.contains("button-container"):
             current = current.parentElement
-        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-actual")[0]
-        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-contents")[0]
-        print(current.className if current is not None else "Error descending")
         current = current.getElementsByClassName("button-img")[0]
-        print(current.className if current is not None else "Error descending")
 
         nav = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
         if nav:

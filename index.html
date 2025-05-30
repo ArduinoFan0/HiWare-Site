@@ -28,7 +28,7 @@
                 position:relative;
                 left:50%;
                 top:0%;
-                overflow-x: clip;
+
             }
             .button-actual {
                 font-size: inherit;
@@ -53,6 +53,20 @@
             .button-contents {
                 height: 100%; width: 100%; font-size: inherit;
             }
+            .loading-icon {
+                animation: 2s linear 0s infinite loading-spin;
+            }
+
+            @keyframes loading-spin {
+                from {
+                    /* pushes the sun down past the viewport */
+                    transform: rotate(-360deg);
+                }
+                to {
+                    /* returns the sun to its default position */
+                    transform: rotate(0deg);
+                }
+            }
         </style>
         <template id="button-template">
             <div class="button-container">
@@ -74,8 +88,9 @@
     </head>
     <body style="
         font-family: sans-serif;
-        background-color: #201020;
+        background-color: #282828;
         color: white;
+        overflow-x: clip;
     ">
 
 
@@ -92,7 +107,9 @@
                 <h1>Please enable JavaScript to access this page.</h1>
             </noscript>
             <div class="jsonly">
-                <h3>Attempting to load JavaScript and PyScript...</h3>
+                <h3>Loading scripts...</h3>
+                <br>
+                <img src="./spinner.png" alt="loading..." class="loading-icon" height="64px">
             </div>
         </div>
 
