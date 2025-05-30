@@ -255,7 +255,7 @@ try:
         output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
     async def music(event):
         audio_obj = document.querySelector("#background-music")
-        audio_obj.mute = not audio_obj.mute
+        audio_obj.muted = not audio_obj.muted
 except BaseException as e:
     def on_exception(my_e):
         import sys, traceback
