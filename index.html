@@ -2,6 +2,7 @@
 <html lang="" my_version="2">
     <head>
         <noscript><style> .jsonly { display: none } </style></noscript>
+        <audio id="background-music" src="./media_files/audio/bit18.mp3" loop autoplay></audio>
         <script src="./mini-coi.js"></script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,7 +20,8 @@
                 border-style: solid;
                 position:sticky;
                 top:0%;
-                left:0%
+                left:0%;
+                padding:0px
             }
             .button-container {
                 width: 100px;
@@ -67,9 +69,19 @@
                     transform: rotate(0deg);
                 }
             }
+            table,
+            tr,
+            thead,
+            th {
+                height:inherit;
+                margin:0px;
+                padding: 0px 0px;
+                border-collapse: collapse;
+
+            }
         </style>
         <template id="button-template">
-            <div class="button-container">
+            <span class="button-container">
                 <!-- previously used py-click="..." -->
                 <button class="button-actual" style="" py-click="clicked_button" custom-on-click="run_script" custom-data='
                 {"name":"alertw","args":["Hello world"]}
@@ -81,7 +93,7 @@
                     </div>
                 </div>
                 </button>
-            </div>
+            </span>
         </template>
         <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css">
         <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
@@ -96,9 +108,17 @@
 
 
         <div class="header">
-            <a href="./index.html" style="position:relative; left:10px; top:10%">
-                <img src="./logo.png" height="80%" style="">
-            </a>
+            <span>
+                <a href="./index.html" style="align-content:start; position:relative; left:10px; top:10%; margin:0px;">
+                    <img src="./logo.png" height="80%" style="">
+                </a>
+            </span>
+            <span>
+                <span hidden class="button">
+                    {"text":"Music","wh":["200px", "69px"],"on-click":"music"}
+                </span>
+            </span>
+
         </div>
 
 
