@@ -1,16 +1,24 @@
+body {
+    font-family: sans-serif;
+    background-color: #282828;
+    color: white;
+    overflow-x: clip;
+    margin: 0px;
+}
 .header {
     z-index: 100000000;
-    margin:0%;
+    margin:0px;
     width:100%;
     height:100px;
     background-color:#0000007f;
-    border-color=#ffffffff;
+    border-color: #89f;
     border-width:2px;
     border-style: solid;
     position:sticky;
     top:0%;
     left:0%;
-    padding:0px
+    padding:0px;
+
 }
 .button-container {
     width: 100px;

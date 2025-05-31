@@ -1,4 +1,6 @@
 import copy
+from typing import overload
+
 from pyscript import document, window, when, workers, ffi, PyWorker
 debug = False
 class hbmckshb():
@@ -7,7 +9,19 @@ try:
     import random, json, time, hashlib
     from threading import Thread
     from js import setTimeout
+    import sys, traceback
 
+
+    def custom_excepthook(exc_type, exc_value, exc_tb):
+        # Format the traceback
+        tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        # Log it to the browser console
+        window.reportError("Custom Uncaught Exception:\n" + tb_str)
+        exit(0)
+        return
+
+    # Set the custom handler
+    sys.excepthook = custom_excepthook
     my_workers = {}
     async def start_worker(worker_path: str, worker_name: str):
         worker = PyWorker(worker_path, type='pyodide')
@@ -16,6 +30,13 @@ try:
     async def stop_worker(worker_name: str):
         my_workers[worker_name].terminate()
         my_workers.remove(worker_name)
+
+
+    enable_js_msg = document.querySelector("#enable-js-message")
+    loading_text = enable_js_msg.querySelector("#loading-text-1")  #
+    loading_text.innerText = "Starting workers..."
+    await start_worker("./alert.py", "./alert.py")
+    await start_worker("./loop.py", "loop")
 
     '''
         const
@@ -123,8 +144,12 @@ try:
 
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
-            item_style = item.getAttribute("style")
-            button_container.setAttribute("style", f"width: {width}; height: {height}; font-size: {font_size}; {item_style}")
+            item_style = str(item.getAttribute("style"))
+            if not item_style.endswith(";"):
+                item_style = item_style + ";"
+                if not item_style.endswith(" "):
+                    item_style = item_style + " "
+            button_container.setAttribute("style", f"{item_style}width: {width}; height: {height}; font-size: {font_size}; {item_style}")
             button_actual = button_container.getElementsByClassName('button-actual').item(0)
             button_contents = button_actual.getElementsByClassName('button-contents').item(0)
             template_text = button_contents.getElementsByClassName("button-text").item(0)
@@ -148,7 +173,8 @@ try:
     fill_from_template_button()
     output_div = document.querySelector("#output")
 
-    enable_js_msg = document.querySelector("#enable-js-message")
+
+
     js_only_content = document.querySelector("#js-only-content")
     enable_js_msg.setAttribute("hidden", "hidden")
     js_only_content.removeAttribute('hidden')
@@ -193,6 +219,26 @@ try:
     @when("mouseleave", ".button-actual")
     async def hover_gone(event):
         animate_button(event.target, "normal")
+    error_counter = 0
+    #@when("error", "*")
+    @overload
+    async def on_error(msg_or_event, url, line, column, error) -> None: ...
+    @overload
+    async def on_error(msg_or_event) -> None: ...
+    async def on_error(msg_or_event):
+        global error_counter, output_div #
+        error_counter += 1
+        suffix = "th"
+        match error_counter % 10:
+            case 1:
+                suffix = "st"
+            case 2:
+                suffix = "nd"
+            case 3:
+                suffix = "rd"
+        output_div.innerText = f"This is the {error_counter}{suffix} error."
+    window.addEventListener("unhandledrejection", ffi.create_proxy(on_error))
+    window.onError = on_error
     @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
     async def clicked_button(event):
         current = event.target
@@ -224,9 +270,11 @@ try:
             except KeyError:
                 pass
         if function is not None:
-            await function(event)
+            try:
+                await function(event)
+            except TypeError:
+                pass
     #@when("click", ".button-actual")
-    await start_worker("./alert.py", "testworker")
     async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
         if not button_actual:
@@ -234,7 +282,8 @@ try:
 
         data = button_actual.getAttribute("custom-data")
         jdata = json.loads(data)
-        worker = my_workers["testworker"]
+        worker_name = jdata["name"]
+        worker = my_workers[worker_name]
         try:
             #
             function_name = jdata["func"]
@@ -256,24 +305,49 @@ try:
     async def music(event):
         audio_obj = document.querySelector("#background-music")
         audio_obj.muted = not audio_obj.muted
+    def apply_settings(event):
+        def apply_music():
+            audio_obj = document.querySelector("#background-music")
+            setting = document.querySelector("#music-slider")
+            audio_obj.volume = float(setting.value) / 100
+            audio_obj.play()
+        apply_music()
     async def config_music():
         audio_obj = document.querySelector("#background-music")
-        audio_obj.volume = 0.5
+        audio_obj.volume = 0.0
     await config_music()
+    popup_classes = [
+        "this-is-not-an-existing-class",
+        "welcome-screen",
+        "settings"
+    ]
+
+
     def hide(event):
-        element = event.target
-        element = navigate_from_element(element, ["settings"])
-        element.setAttribute("hidden", "true")
+        for n in popup_classes:
+            try:
+                element = event.target
+                element = navigate_from_element(element, [n])
+                element.setAttribute("hidden", "true")
+                break
+            except AttributeError:
+                continue
+
+    @when("click", "*")
+    async def click(event):
+        #return
+        time.sleep(0.001)
+        apply_settings(None)
+    def open_settings(event):
+        try:
+
+            settings_page = document.querySelector(".settings")
+
+            settings_page.removeAttribute("hidden")
+        except AttributeError:
+            pass
+    my_workers["loop"].sync.apply_settings = apply_settings
 except BaseException as e:
     def on_exception(my_e):
-        import sys, traceback
-        def custom_excepthook(exc_type, exc_value, exc_tb):
-            # Format the traceback
-            tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
-            # Log it to the browser console
-            window.reportError("Custom Uncaught Exception:\n" + tb_str)
-
-        # Set the custom handler
-        sys.excepthook = custom_excepthook
         raise my_e
     on_exception(e)

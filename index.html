@@ -26,12 +26,7 @@
         <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css">
         <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
     </head>
-    <body style="
-        font-family: sans-serif;
-        background-color: #282828;
-        color: white;
-        overflow-x: clip;
-    ">
+    <body>
 
 
         <div id="audio_container" hidden>
@@ -43,9 +38,17 @@
                     <img src="./logo.png" height="80%" style="">
                 </a>
             </span>
-            <span hidden>
-                <span hidden class="button" style="position:fixed; top:20px; left:330px">
-                    {"text":"Music","wh":["200px", "69px"],"on-click":"music"}
+            <span>
+                <span hidden class="button" style="position:fixed; top:10px; left:240px">
+                    {
+                        "text":"⚙️",
+                        "wh":[
+                            "50px",
+                            "40px"
+                        ],
+                        "on-click":"open_settings",
+                        "text-style":"font-size:22px"
+                    }
                 </span>
             </span>
 
@@ -57,16 +60,16 @@
                 <h1>Please enable JavaScript to access this page.</h1>
             </noscript>
             <div class="jsonly">
-                <h3>Loading scripts...</h3>
+                <h3 id="loading-text-1">Loading scripts...</h3>
                 <br>
-                <img src="/spinner.png" alt="loading..." class="loading-icon" height="64px">
+                <img src="./spinner.png" alt="loading..." class="loading-icon" height="64px">
             </div>
         </div>
 
 
 
         <div id="js-only-content" hidden style="text-align:center">
-            <div class="settings" id="settings-page-1" style="
+            <div class="welcome-screen" id="settings-page-1" style="
                 background-color:#00000070;
                 width:100%;
                 height:100%;
@@ -92,9 +95,42 @@
                     position:fixed;
                     margin:100px;
                 ">
-                    Welcome
+                    <h1>🎉Welcome to the open Beta!🎉</h1>
+                    <small>Click offward of this welcome box to close it.</small>
                 </div>
+            </div>
+            <div hidden class="settings" id="" style="
+                background-color:#00000070;
+                width:100%;
+                height:100%;
+                position:fixed;
+                left:0px;
+                top:0px;
+                z-index:100000001;
 
+            ">
+                <div py-click="hide" style="
+                    background-color:#00a7;
+                    width:100%;
+                    height:100%;
+                    z-index:100000001;
+                    margin:0px;
+                    position:fixed;
+                "></div>
+                <div style="
+                    background-color:#444;
+                    width:calc(100% - 200px);
+                    height:calc(100% - 200px);
+                    z-index:100000002;
+                    position:fixed;
+                    margin:100px;
+                ">
+                    <h1>Settings</h1>
+                    <label>
+                        Music
+                        <input id="music-slider" type="range" min="0" max="100" value="0"></input>
+                    </label>
+                </div>
             </div>
             <h1 id="Title">Test site</h1>
             <p id="helptext">Press the button to generate a random number with some text</p>
@@ -125,7 +161,7 @@
                         "69px"
                     ],
                     "custom-data":{
-                        "name":"alert",
+                        "name":"./alert.py",
                         "args":[
                             "Hello world"
                         ],
