@@ -66,13 +66,29 @@ body {
         transform: rotate(0deg);
     }
 }
-table,
-tr,
-thead,
-th {
-    height:inherit;
-    margin:0px;
-    padding: 0px 0px;
-    border-collapse: collapse;
-
+.styled-break {
+    height: 0;
+    border-top: 2px dashed #aaa;
+    margin: 0.2em 0;
+}
+fieldset {
+        border: 2px solid #aaa;
+        border-radius: 10px
+}
+legend {
+    font-size: 1.5em;
+    border: inherit;
+    background-color: #0005;
+    text-align: center
+}
+.popup-box{
+    background-color:#444;
+    width:calc(100% - 200px);
+    height:calc(100% - 200px);
+    z-index:100000002;
+    position:fixed;
+    margin:100px;
+    border: 1px solid #aaaf;
+    border-radius: 10px;
+    overflow-y: scroll
 }

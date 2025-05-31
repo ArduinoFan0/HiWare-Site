@@ -87,14 +87,7 @@
                     margin:0px;
                     position:fixed;
                 "></div>
-                <div style="
-                    background-color:#444;
-                    width:calc(100% - 200px);
-                    height:calc(100% - 200px);
-                    z-index:100000002;
-                    position:fixed;
-                    margin:100px;
-                ">
+                <div class="popup-box">
                     <h1>🎉Welcome to the open Beta!🎉</h1>
                     <small>Click offward of this welcome box to close it.</small>
                 </div>
@@ -117,19 +110,23 @@
                     margin:0px;
                     position:fixed;
                 "></div>
-                <div style="
-                    background-color:#444;
-                    width:calc(100% - 200px);
-                    height:calc(100% - 200px);
-                    z-index:100000002;
-                    position:fixed;
-                    margin:100px;
-                ">
+                <div class="popup-box">
                     <h1>Settings</h1>
-                    <label>
-                        Music
-                        <input id="music-slider" type="range" min="0" max="100" value="0"></input>
-                    </label>
+                    <fieldset>
+                        <legend>Audio</legend>
+                        <span>
+                            <label for="music-slider">Music Volume</label>
+                            <input id="music-slider" type="range" min="0" max="100" value="0" width="20px">
+                        </span>
+                        <!--<div class="styled-break"></div>-->
+                        <br>
+                        <span>
+                            <label for="music-type">Music Type</label>
+                            <select id="music-type">
+                                <option value="1">8Bit Wonder</option>
+                            </select>
+                        </span>
+                    </fieldset>
                 </div>
             </div>
             <h1 id="Title">Test site</h1>

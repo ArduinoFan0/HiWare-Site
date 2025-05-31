@@ -1,6 +1,5 @@
 import copy
 from typing import overload
-
 from pyscript import document, window, when, workers, ffi, PyWorker
 debug = False
 class hbmckshb():
@@ -10,8 +9,6 @@ try:
     from threading import Thread
     from js import setTimeout
     import sys, traceback
-
-
     def custom_excepthook(exc_type, exc_value, exc_tb):
         # Format the traceback
         tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
@@ -19,8 +16,6 @@ try:
         window.reportError("Custom Uncaught Exception:\n" + tb_str)
         exit(0)
         return
-
-    # Set the custom handler
     sys.excepthook = custom_excepthook
     my_workers = {}
     async def start_worker(worker_path: str, worker_name: str):
@@ -30,34 +25,11 @@ try:
     async def stop_worker(worker_name: str):
         my_workers[worker_name].terminate()
         my_workers.remove(worker_name)
-
-
     enable_js_msg = document.querySelector("#enable-js-message")
     loading_text = enable_js_msg.querySelector("#loading-text-1")  #
     loading_text.innerText = "Starting workers..."
     await start_worker("./alert.py", "./alert.py")
     await start_worker("./loop.py", "loop")
-
-    '''
-        const
-        newspaperSpinning = [
-            {transform: "rotate(0) scale(1)"},
-            {transform: "rotate(360deg) scale(0)"},
-        ];
-    
-        const
-        newspaperTiming = {
-            duration: 2000,
-            iterations: 1,
-        };
-    
-        const
-        newspaper = document.querySelector(".newspaper");
-    
-        newspaper.addEventListener("click", () = > {
-            newspaper.animate(newspaperSpinning, newspaperTiming);
-        });
-    '''
     def animate(el, keyframes:list, options:dict):
         my_keyframes = keyframes.copy()
         my_keyframes.append({})
@@ -81,25 +53,18 @@ try:
             proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
             setattr(hbmckshb, proxy_handle, ffi.create_proxy(frame))
             setTimeout(getattr(hbmckshb, proxy_handle), interval * i)
-
-
     def brighten_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
         el.style.filter = "brightness(150%)"
-
-
     def normal_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.2s ease-in-out"
         el.style.filter = "brightness(100%)"
-
-
     def flash_element(el):
         # Set the initial brightness
         el.style.transition = "filter 0.06s ease-in-out"
         el.style.filter = "brightness(150%)"
-
         # Schedule brightness reset using JS setTimeout (non-blocking)
         def after_init():
             el.style.transition = "filter 0.2s ease-in-out"
@@ -107,14 +72,12 @@ try:
             after_init_proxy.destroy()
         after_init_proxy = ffi.create_proxy(after_init)
         setTimeout(after_init_proxy, 60)  # Delay in milliseconds
-
     def fill_from_template_button():
         template_name = "button-template"
         placeholder_classname = "button"
         buttons = document.getElementsByClassName(placeholder_classname)
         amount = buttons.length
         template = document.getElementById(template_name)
-
         for i in range(amount):
             item = buttons.item(0)
             my_json = item.innerText
@@ -141,7 +104,6 @@ try:
                         my_tstyle = my_tstyle + " "
             except KeyError:
                 my_tstyle = ""
-
             clone = template.content.cloneNode(True)
             button_container = clone.children.item(0)
             item_style = str(item.getAttribute("style"))
@@ -168,17 +130,12 @@ try:
             except KeyError:
                 pass
             template_text.innerText = my_text
-
             item.replaceWith(clone)
     fill_from_template_button()
     output_div = document.querySelector("#output")
-
-
-
     js_only_content = document.querySelector("#js-only-content")
     enable_js_msg.setAttribute("hidden", "hidden")
     js_only_content.removeAttribute('hidden')
-
     output_div.innerText = "The Python script is running."
     def navigate_from_element(src_element, dests=[]):
         try:
@@ -187,7 +144,6 @@ try:
             head = my_dests.pop(0)
             while current and not current.classList.contains(head):
                 current = current.parentElement
-            #print(current.className if current is not None else "Error descending")
             for dest in my_dests:
                 current = current.getElementsByClassName(dest)[0]
             return current
@@ -201,7 +157,6 @@ try:
         current = current.getElementsByClassName("button-actual")[0]
         current = current.getElementsByClassName("button-contents")[0]
         current = current.getElementsByClassName("button-img")[0]
-
         nav = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
         if nav:
             match mode:
@@ -220,7 +175,6 @@ try:
     async def hover_gone(event):
         animate_button(event.target, "normal")
     error_counter = 0
-    #@when("error", "*")
     @overload
     async def on_error(msg_or_event, url, line, column, error) -> None: ...
     @overload
@@ -243,7 +197,6 @@ try:
     async def clicked_button(event):
         current = event.target
         current = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
-        #animate_button(current)
         animate(current, [
             {"filter": "hue-rotate(90deg)"},
             {"filter": "hue-rotate(80deg)"},
@@ -274,18 +227,15 @@ try:
                 await function(event)
             except TypeError:
                 pass
-    #@when("click", ".button-actual")
     async def run_script(event):
         button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
         if not button_actual:
             return
-
         data = button_actual.getAttribute("custom-data")
         jdata = json.loads(data)
         worker_name = jdata["name"]
         worker = my_workers[worker_name]
         try:
-            #
             function_name = jdata["func"]
             my_worker = worker
             function = getattr(my_worker.sync, function_name)
@@ -295,9 +245,6 @@ try:
             my_worker = worker
             await my_worker.sync.run(*jdata['args'])
     async def generate(event):
-        # Traverse up to button-container
-        current = event.target
-        #animate_button(current)
         global output_div
         input_text = document.querySelector("#text_1")
         my_text = input_text.value
