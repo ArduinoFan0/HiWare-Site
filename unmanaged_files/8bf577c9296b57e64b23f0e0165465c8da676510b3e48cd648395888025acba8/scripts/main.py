@@ -1,4 +1,6 @@
+import asyncio
 import copy
+import os
 from typing import overload
 from pyscript import document, window, when, workers, ffi, PyWorker
 from pyscript.ffi import create_proxy
@@ -6,10 +8,79 @@ debug = False
 class hbmckshb():
     pass
 try:
+    developer_mode = False
     import random, json, time, hashlib
     from threading import Thread
     from js import setTimeout
+    cookies = window.cookieStore
     import sys, traceback
+    class secret_question_gen:
+        people = [
+            "Alice",
+            "Bob",
+            "Charlie",
+            "David",
+            "Laurel",
+            "Michael",
+            "Oliver",
+            "Victor",
+            "William",
+            "Chris"
+        ]
+        possessives = [
+            "my",
+            "your",
+            "their",
+            "his",
+            "her",
+            "the"
+        ]
+        objects = [
+            "moon",
+            "sun",
+            "country"
+        ]
+        adjectives = [
+            "quick",
+            "brown",
+            "lazy",
+            "red",
+            "white",
+            "black",
+            "slow",
+            "busy"
+        ]
+        nouns = people.copy()
+        nouns.extend(objects)
+
+        def generate(self):
+            r = random.choice
+            secret_questions = [
+                f"Why did {r(self.people)} take over {r(self.possessives)} {r(self.objects)}?",
+                f"The {r(self.adjectives)} {r(self.adjectives)} {r(self.nouns)} jumped over the {r(self.adjectives)} {r(self.nouns)}."
+            ]
+            return random.choice(secret_questions)
+    s_q = secret_question_gen()
+
+    secret_question:str = s_q.generate()
+    interacted = False
+    def schedule(start_delay: float, function):
+        # Create the callback proxy
+        async def wrapped():
+            try:
+                await function()
+            except Exception:
+                pass
+            wrapped_proxy.destroy()
+
+        wrapped_proxy = create_proxy(wrapped)
+        setTimeout(wrapped_proxy, start_delay)
+    def my_loop():
+        #do something
+        #then, run "schedule(77, my_loop)" at the very end of my_loop
+        pass
+        schedule(77, my_loop)
+    my_loop()
     def custom_excepthook(exc_type, exc_value, exc_tb):
         # Format the traceback
         tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
@@ -20,7 +91,12 @@ try:
     sys.excepthook = custom_excepthook
     #from js import jsdocument, jswindow
     #from pyodide.ffi import jsto_js, jscreate_proxy
-
+    async def sync_cookies():
+        global secret_question
+        if await cookies.get('generated-s-q') is None:
+            await cookies.set('generated-s-q', secret_question)
+        else:
+            secret_question = (await cookies.get('generated-s-q')).value
 
     async def merge_page(url):
         # Step 1: Fetch the external HTML page
@@ -64,7 +140,7 @@ try:
     enable_js_msg = document.querySelector("#enable-js-message")
     loading_text = enable_js_msg.querySelector("#loading-text-1")  #
     loading_text.innerText = "Starting workers..."
-    await start_worker("./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py", "alert.py")
+    await start_worker("/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py", "alert.py")
     #await start_worker("./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/loop.py", "loop")
     def animate(el, keyframes:list, options:dict, restore_style:bool=True):
         my_keyframes = keyframes.copy()
@@ -195,6 +271,8 @@ try:
                     placeholder.replaceWith(clone)
         pass
     fill_from_template_button()
+    for _ in range(20):
+        fill_from_template()
     fill_from_template()
     output_div = document.querySelector("#output")
     js_only_content = document.querySelector("#js-only-content")
@@ -340,7 +418,8 @@ try:
                     audio_obj.volume = float(setting.value) / 100
                 else:
                     audio_obj.volume = 0.0
-                audio_obj.play()
+                if interacted:
+                    audio_obj.play()
         #await config_music()
         apply_music()
     async def config_music():
@@ -376,8 +455,10 @@ try:
 
     @when("click", "*")
     async def click(event):
+        global interacted
         #return
         time.sleep(0.001)
+        interacted = True
         await apply_settings(None)
     def open_settings(event):
         try:
@@ -387,7 +468,50 @@ try:
             settings_page.removeAttribute("hidden")
         except AttributeError:
             pass
-    #my_workers["loop"].sync.apply_settings = apply_settings
+    async def loop():
+        document.querySelector('#rapid-random').innerText = random.randint(1, 100)
+        await apply_settings(None)
+        schedule(77, loop)
+    await loop()
+    await sync_cookies()
+    secret_answer = hashlib.sha256(secret_question.encode()).hexdigest()
+
+    print("To resolve the developer access key:")
+
+    print(secret_question)
+    async def try_devkey(event, quiet=False, force_cookie=False):
+        key_input = document.querySelector("#devkey-input")
+        global developer_mode
+        key:str = ""
+        if not force_cookie:
+            key = key_input.value
+        if force_cookie:
+            pass#key = "None"
+        if await cookies.get('user-generated-key') is None:
+            await cookies.set('user-generated-key', key)
+        else:
+            if not force_cookie:
+                cookies.set('user-generated-key', key)
+            data = (await cookies.get('user-generated-key')).value
+            if key != data:
+                key_input.value = data
+                key = data
+
+        if key == secret_answer:
+            if not quiet: window.alert("Access granted")
+            developer_mode = True
+            for element in document.getElementsByClassName("developer-mode-element"):
+                element.removeAttribute("hidden")
+            for element in document.getElementsByClassName("user-mode-element"):
+                element.setAttribute("hidden", "true")
+        else:
+            if not quiet: window.alert("Access denied")
+            for element in document.getElementsByClassName("developer-mode-element"):
+                element.setAttribute("hidden", True)
+            for element in document.getElementsByClassName("user-mode-element"):
+                element.removeAttribute("hidden")
+            developer_mode = False
+    await try_devkey(None, quiet=True, force_cookie=True)
 except BaseException as e:
     def on_exception(my_e):
         raise my_e

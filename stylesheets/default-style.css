@@ -9,6 +9,20 @@ body {
     justify-content: center;
     align-content: center;
 }
+row- {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+col- {
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+}
+grid- {
+    ;
+}
+
 .header {
     z-index: 100000000;
     margin:0px;
@@ -25,6 +39,29 @@ body {
     padding:0px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
+}
+footer {
+    height:50px;
+}
+.footer {
+    z-index: 100000000;
+    margin:0px;
+    width:100%;
+    height:50px;
+    background-color:#0000007f;
+    border-color: #89f;
+    border-width:2px;
+    border-style: solid;
+    border-bottom: none;
+    position:fixed;
+    bottom:0%;
+    left:0%;
+    padding:0px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
     display: flex;
     flex-direction: row;
     justify-content: space-between
@@ -55,9 +92,14 @@ body {
 .button-text {
     position: relative;
     bottom:100%;
+    height:60%;
     z-index: 1;
     font-size: 56%;
     color:white;
+    overflow-x: clip;
+    overflow-y: clip;
+    text-overflow: ellipsis;
+
 }
 .button-contents {
     height: inherit;
@@ -126,4 +168,7 @@ a {
 }
 main {
     padding: 8px
+}
+#terms-of-service-text {
+    text-align: left;
 }
