@@ -140,7 +140,7 @@ try:
     enable_js_msg = document.querySelector("#enable-js-message")
     loading_text = enable_js_msg.querySelector("#loading-text-1")  #
     loading_text.innerText = "Starting workers..."
-    await start_worker("/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py", "alert.py")
+    await start_worker("/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py", "alert.py")
     #await start_worker("./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/loop.py", "loop")
     def animate(el, keyframes:list, options:dict, restore_style:bool=True):
         my_keyframes = keyframes.copy()
