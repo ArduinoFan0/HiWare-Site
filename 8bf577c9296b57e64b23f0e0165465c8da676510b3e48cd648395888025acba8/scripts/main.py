@@ -1,0 +1,345 @@
+import copy
+from typing import overload
+from pyscript import document, window, when, workers, ffi, PyWorker
+debug = False
+class hbmckshb():
+    pass
+try:
+    import random, json, time, hashlib
+    from threading import Thread
+    from js import setTimeout
+    import sys, traceback
+    def custom_excepthook(exc_type, exc_value, exc_tb):
+        # Format the traceback
+        tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        # Log it to the browser console
+        window.reportError("Custom Uncaught Exception:\n" + tb_str)
+        exit(0)
+        return
+    sys.excepthook = custom_excepthook
+    my_workers = {}
+    async def start_worker(worker_path: str, worker_name: str):
+        worker = PyWorker(worker_path, type='pyodide')
+        await worker.ready
+        my_workers[worker_name] = worker
+    async def stop_worker(worker_name: str):
+        my_workers[worker_name].terminate()
+        my_workers.remove(worker_name)
+    enable_js_msg = document.querySelector("#enable-js-message")
+    loading_text = enable_js_msg.querySelector("#loading-text-1")  #
+    loading_text.innerText = "Starting workers..."
+    await start_worker("./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py", "alert.py")
+    #await start_worker("./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/loop.py", "loop")
+    def animate(el, keyframes:list, options:dict):
+        my_keyframes = keyframes.copy()
+        my_keyframes.append({})
+        old_style = el.style
+        duration = options['duration']
+        iterations = options['iterations']
+        num_frames = len(my_keyframes)
+        interval = round(duration/num_frames)
+        i = -1
+        for keyframe in my_keyframes:
+            i += 1
+            on_start = bool(i == 0)
+            on_end = bool(i == num_frames-1)
+            on_endpoint = bool(on_start or on_end)
+            def frame(_keyframe=keyframe, _endpoint=on_endpoint):
+                try:
+                    el.style.transition = f"{list(_keyframe.keys())[0]} {interval if not _endpoint else 0}ms linear"
+                    setattr(el.style, f"{list(_keyframe.keys())[0]}", f"{list(_keyframe.values())[0]}")
+                except IndexError:
+                    el.style = old_style
+            proxy_handle = hashlib.md5(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
+            setattr(hbmckshb, proxy_handle, ffi.create_proxy(frame))
+            setTimeout(getattr(hbmckshb, proxy_handle), interval * i)
+    def brighten_element(el):
+        # Set the initial brightness
+        el.style.transition = "filter 0.06s ease-in-out"
+        el.style.filter = "brightness(150%)"
+    def normal_element(el):
+        # Set the initial brightness
+        el.style.transition = "filter 0.2s ease-in-out"
+        el.style.filter = "brightness(100%)"
+    def flash_element(el):
+        # Set the initial brightness
+        el.style.transition = "filter 0.06s ease-in-out"
+        el.style.filter = "brightness(150%)"
+        # Schedule brightness reset using JS setTimeout (non-blocking)
+        def after_init():
+            el.style.transition = "filter 0.2s ease-in-out"
+            el.style.filter = "brightness(100%)"
+            after_init_proxy.destroy()
+        after_init_proxy = ffi.create_proxy(after_init)
+        setTimeout(after_init_proxy, 60)  # Delay in milliseconds
+    def fill_from_template_button():
+        template_name = "button-template"
+        placeholder_classname = "button"
+        buttons = document.getElementsByClassName(placeholder_classname)
+        amount = buttons.length
+        template = document.getElementById(template_name)
+        for i in range(amount):
+            item = buttons.item(0)
+            my_json = item.innerText
+            my_jdict = json.loads(my_json)
+            my_text = my_jdict["text"]
+            width = my_jdict["wh"][0]
+            height = my_jdict["wh"][1]
+            font_size = "0%"
+            if height.endswith("px"):
+                font_size = f"{int(height[:-2]) - 10}px"
+            try:
+                my_style = my_jdict["style"]
+                if not my_style.endswith(";"):
+                    my_style = my_style + ";"
+                    if not my_style.endswith(" "):
+                        my_style = my_style + " "
+            except KeyError:
+                my_style = ""
+            try:
+                my_tstyle = my_jdict["text-style"]
+                if not my_tstyle.endswith(";"):
+                    my_tstyle = my_tstyle + ";"
+                    if not my_tstyle.endswith(" "):
+                        my_tstyle = my_tstyle + " "
+            except KeyError:
+                my_tstyle = ""
+            clone = template.content.cloneNode(True)
+            button_container = clone.children.item(0)
+            item_style = str(item.getAttribute("style"))
+            if not item_style.endswith(";"):
+                item_style = item_style + ";"
+                if not item_style.endswith(" "):
+                    item_style = item_style + " "
+            button_container.setAttribute("style", f"{item_style}width: {width}; height: {height}; font-size: {font_size}; {item_style}")
+            button_actual = button_container.getElementsByClassName('button-actual').item(0)
+            button_contents = button_actual.getElementsByClassName('button-contents').item(0)
+            template_text = button_contents.getElementsByClassName("button-text").item(0)
+            template_text.setAttribute("style", f"{my_tstyle}{template_text.getAttribute("style")}{my_tstyle}")
+            button_image = button_contents.getElementsByClassName("button-img").item(0)
+            try:
+                button_image.setAttribute("src", my_jdict["img"])
+            except KeyError:
+                pass
+            try:
+                button_actual.setAttribute("custom-on-click", my_jdict["on-click"])
+            except KeyError:
+                pass
+            try:
+                button_actual.setAttribute("custom-data", json.dumps(str(my_jdict['custom-data']).replace("'", '"') ).strip('"').replace('\\', ''))
+            except KeyError:
+                pass
+            template_text.innerText = my_text
+            item.replaceWith(clone)
+    def fill_from_template():
+        #Replace <from-template> elements with content from their <template> with the ID corresponding to the <from-template>'s class attribute
+        #Then, <data value=VAR_A>'s contents from <from-template> replace <template>'s <data value=VAR_A> element, then with VAR_B, and so on
+        #
+        templates = document.getElementsByTagName("template")
+        placeholders = document.getElementsByTagName("place-holder")
+        for template in range(len(templates)):
+            template = templates[template]
+            for placeholder in range(len(placeholders)):
+                clone = template.content.cloneNode(True)
+                clone_contents = clone.children.item(0)
+                placeholder = placeholders[0]
+                if placeholder.className == template.getAttribute("id"):
+                    pdatas = placeholder.getElementsByTagName("data")
+                    tdatas = clone_contents.getElementsByTagName("data")
+                    for tdata in range(len(tdatas)):
+                        for pdata in range(len(pdatas)):
+                            if pdatas[pdata].value == tdatas[tdata].value:
+                                tdatas[tdata].replaceWith(pdatas[pdata])
+                    clone_contents.setAttribute('class', placeholder.getAttribute("id"))
+                    if placeholder.hasAttribute('hidden'):
+                        clone_contents.setAttribute('hidden', True)
+                    placeholder.replaceWith(clone)
+        pass
+    fill_from_template_button()
+    fill_from_template()
+    output_div = document.querySelector("#output")
+    js_only_content = document.querySelector("#js-only-content")
+    enable_js_msg.setAttribute("hidden", "hidden")
+    js_only_content.removeAttribute('hidden')
+    output_div.innerText = "The Python script is running."
+    def navigate_from_element(src_element, dests=[]):
+        try:
+            current = src_element
+            my_dests = dests.copy()
+            head = my_dests.pop(0)
+            while current and not current.classList.contains(head):
+                current = current.parentElement
+            for dest in my_dests:
+                current = current.getElementsByClassName(dest)[0]
+            return current
+        except:
+            window.reportError(f"could not navigate from {src_element} to {dests}")
+            return None
+    def animate_button(element, mode="flash"):
+        current = element
+        while current and not current.classList.contains("button-container"):
+            current = current.parentElement
+        current = current.getElementsByClassName("button-actual")[0]
+        current = current.getElementsByClassName("button-contents")[0]
+        current = current.getElementsByClassName("button-img")[0]
+        nav = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
+        if nav:
+            match mode:
+                case "flash":
+                    flash_element(nav)
+                case "brighten":
+                    brighten_element(nav)
+                case "normal":
+                    normal_element(nav)
+        else:
+            window.reportError("Couldn't apply animation to requested element.")
+    @when("mouseenter", ".button-actual")
+    async def hovered(event):
+        animate_button(event.target, "brighten")
+    @when("mouseleave", ".button-actual")
+    async def hover_gone(event):
+        animate_button(event.target, "normal")
+    error_counter = 0
+    @overload
+    async def on_error(msg_or_event, url, line, column, error) -> None: ...
+    @overload
+    async def on_error(msg_or_event) -> None: ...
+    async def on_error(msg_or_event):
+        global error_counter, output_div #
+        error_counter += 1
+        suffix = "th"
+        match error_counter % 10:
+            case 1:
+                suffix = "st"
+            case 2:
+                suffix = "nd"
+            case 3:
+                suffix = "rd"
+        output_div.innerText = f"This is the {error_counter}{suffix} error."
+    window.addEventListener("unhandledrejection", ffi.create_proxy(on_error))
+    window.onError = on_error
+    @when("click", ".button-container.button-actual.button-contents.button-img.button-text")
+    async def clicked_button(event):
+        current = event.target
+        current = navigate_from_element(current, ["button-container", "button-actual", "button-contents", "button-img"])
+        animate(current, [
+            {"filter": "hue-rotate(90deg)"},
+            {"filter": "hue-rotate(80deg)"},
+            {"filter": "hue-rotate(70deg)"},
+            {"filter": "hue-rotate(60deg)"},
+            {"filter": "hue-rotate(50deg)"},
+            {"filter": "hue-rotate(40deg)"},
+            {"filter": "hue-rotate(30deg)"},
+            {"filter": "hue-rotate(20deg)"},
+            {"filter": "hue-rotate(10deg)"},
+            {"filter": "hue-rotate(0deg)"}
+        ],{
+            "duration": 500,
+            "iterations": 1
+        })
+        button_actual = navigate_from_element(current, ["button-container", "button-actual"])
+        function_name = button_actual.getAttribute("custom-on-click")
+        function = None
+        for i in range(300):
+            try:
+                function = globals()[function_name]
+                time.sleep(0.01)
+                break
+            except KeyError:
+                pass
+        if function is not None:
+            try:
+                await function(event)
+            except TypeError:
+                pass
+    async def run_script(event):
+        button_actual = navigate_from_element(event.target, ["button-container", "button-actual"])
+        if not button_actual:
+            return
+        data = button_actual.getAttribute("custom-data")
+        jdata = json.loads(data)
+        worker_name = jdata["name"]
+        try:
+            worker = my_workers[worker_name]
+            try:
+                function_name = jdata["func"]
+                my_worker = worker
+                function = getattr(my_worker.sync, function_name)
+                await function(*jdata['args'])
+            except (KeyError, TypeError, AttributeError) as e:
+                my_worker = worker
+                await my_worker.sync.run(*jdata['args'])
+        except (KeyError, TypeError, AttributeError) as e:
+            window.reportError(f"exception occurred: {type(e).__name__}: {e}")
+
+    async def generate(event):
+        global output_div
+        input_text = document.querySelector("#text_1")
+        my_text = input_text.value
+        output_div.innerText = f"{my_text} - {random.randint(1, 100)}"
+    async def music(event):
+        for music_obj in document.getElementsByClassName("background-music"):
+            #audio_obj = document.querySelector("#background-music")
+            audio_obj = music_obj
+            audio_obj.muted = not audio_obj.muted
+    old_music = ""
+    async def apply_settings(event):
+        def apply_music():
+            global old_music
+            for music_obj in document.getElementsByClassName("background-music"):
+                # audio_obj = document.querySelector("#background-music")
+                audio_obj = music_obj
+                setting = document.querySelector("#music-slider")
+                music_type = document.querySelector("#music-type")
+
+                if audio_obj.getAttribute("name") == music_type.value:
+                    if old_music != music_type.value:
+                        old_music = music_type.value
+                        audio_obj.currentTime = 0
+                    audio_obj.volume = float(setting.value) / 100
+                else:
+                    audio_obj.volume = 0.0
+                audio_obj.play()
+        #await config_music()
+        apply_music()
+    async def config_music():
+        for music_obj in document.getElementsByClassName("background-music"):
+            # audio_obj = document.querySelector("#background-music")
+            audio_obj = music_obj
+            audio_obj.volume = 0.0
+    await config_music()
+    popup_classes = [
+        "this-is-not-an-existing-class",
+        "welcome-screen",
+        "settings"
+    ]
+
+
+    def hide(event):
+        for n in popup_classes:
+            try:
+                element = event.target
+                element = navigate_from_element(element, [n])
+                element.setAttribute("hidden", "true")
+                break
+            except AttributeError:
+                continue
+
+    @when("click", "*")
+    async def click(event):
+        #return
+        time.sleep(0.001)
+        await apply_settings(None)
+    def open_settings(event):
+        try:
+
+            settings_page = document.querySelector(".settings")
+
+            settings_page.removeAttribute("hidden")
+        except AttributeError:
+            pass
+    #my_workers["loop"].sync.apply_settings = apply_settings
+except BaseException as e:
+    def on_exception(my_e):
+        raise my_e
+    on_exception(e)

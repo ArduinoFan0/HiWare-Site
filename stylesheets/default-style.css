@@ -73,15 +73,18 @@ body {
 }
 fieldset {
         border: 2px solid #aaa;
-        border-radius: 10px
+        border-radius: 10px;
+        margin: 10px 3px;
+        text-align: center
 }
 legend {
     font-size: 1.5em;
     border: inherit;
     background-color: #0005;
-    text-align: center
+    text-align: center;
+
 }
-.popup-box{
+.popup-box {
     background-color:#444;
     width:calc(100% - 200px);
     height:calc(100% - 200px);
@@ -90,5 +93,18 @@ legend {
     margin:100px;
     border: 1px solid #aaaf;
     border-radius: 10px;
-    overflow-y: scroll
+    overflow-y: scroll;
+    scrollbar-width: thin
+}
+x-br {
+    height: 0;
+    border-top: 2px dashed #aaa;
+    margin: 0.2em 0;
+    display:block;
+}
+bold {
+    font-weight: bold;
+}
+a {
+    color: #0ff
 }
