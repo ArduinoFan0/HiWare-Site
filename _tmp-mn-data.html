@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <template id="button-template">
+            <div class="button-container">
+                <!-- previously used py-click="..." -->
+                <button class="button-actual" style="" py-click="clicked_button" custom-on-click="run_script" custom-data='
+                {"name":"alertw","args":["Hello world"]}
+                '>
+                <div class="button-contents">
+                    <img
+                            class="button-img"
+                            src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/button-default.png"
+                            alt="Button image">
+                    <div class="button-text">
+                        N!
+                    </div>
+                </div>
+                </button>
+            </div>
+        </template>
+        <template id="popup-screen-template">
+            <div class="" style="
+                background-color:#00000070;
+                width:100%;
+                height:100%;
+                position:fixed;
+                left:0px;
+                top:0px;
+                z-index:100000001;
+            ">
+                <div py-click="hide" style="
+                    background-color:#00a7;
+                    width:100%;
+                    height:100%;
+                    z-index:100000001;
+                    margin:0px;
+                    position:fixed;
+                "></div>
+                <div class="popup-box">
+                    <data value="fill-from-content"></data>
+                </div>
+            </div>
+        </template>
+    </head>
+    <body>
+        <div id="js-only-content" hidden style="text-align:center">
+            <place-holder class="popup-screen-template" id="settings" hidden>
+                <data value="fill-from-content">
+                    <h1>Settings</h1>
+                    <fieldset>
+                        <legend>Audio</legend>
+                        <span>
+                            <label for="music-slider">Music Volume</label>
+                            <input id="music-slider" type="range" min="0" max="100" value="0" width="20px">
+                        </span>
+                        <!--<div class="styled-break"></div>-->
+                        <br>
+                        <span>
+                            <label for="music-type">Music Type</label>
+                            <select id="music-type">
+                                <option value="bit18">BIT18 Ultimate</option>
+                                <option value="8Bit-Wonder">8Bit Wonder</option>
+                                <option value="COTR Part 1">COTR Part 1</option>
+                                <option value="COTR Part 2">COTR Part 2</option>
+                                <option value="COTR Uncut">COTR Uncut</option>
+                                <option value="Synthetic Fields">Synthetic Fields</option>
+                            </select>
+                        </span>
+                        <x-br></x-br>
+                        <span>
+                            <label for="sfx-vol">SFX Volume</label>
+                            <input id="sfx-vol" type="range" min="0" max="100" value="0">
+                        </span>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Credits</legend>
+                        <div style="font-weight:bold; text-align:left">
+                            From <a href="https://g.co/kgs/49AXg9K" target="_blank">Martin Linda</a>... of the Rytmik Ultimate team: The demo songs
+                        </div>
+                        <ul style="text-align:left">
+                            <li>BIT18 Ultimate</li>
+                            <li><i>"COTR" </i>: Call of the Rytmitron</li>
+                            <li>Synthetic Fields (Rytmik Lite)</li>
+                            <li>8Bit Wonder</li>
+                        </ul>
+                        <x-br></x-br>
+                        <div style="font-weight:bold; text-align:left">Help from:</div>
+                        <ul style="text-align:left">
+                            <li>
+                                <a href="https://chatgpt.com/" target="_blank"><bold>ChatGPT</bold></a>
+                                <br>
+                                ⤷Created by OpenAI
+                            </li>
+                        </ul>
+                    </fieldset>
+                </data>
+            </place-holder>
+            <main>
+                Hello!
+            </main>
+
+        </div>
+        <script
+                type="py"
+                src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/main.py"
+                config="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json">
+        </script>
+        <script
+                type="py"
+                src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py"
+                config="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json"
+                worker
+                name="alertw">
+        </script>
+    </body>
+</html>

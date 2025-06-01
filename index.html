@@ -5,26 +5,27 @@
         <script src="./mini-coi.js"></script>
         <meta charset="utf-8" />
         <meta name="viewport" content="initial-scale=0.0" />
-        <title>test</title>
+        <title>HiWare</title>
         <link rel="icon" href="./favicon.png">
         <link rel="stylesheet" href="./stylesheets/default-style.css">
         <template id="button-template">
-            <div class="button-container">
+            <span class="button-container">
+
                 <!-- previously used py-click="..." -->
-                <button class="button-actual" style="" py-click="clicked_button" custom-on-click="run_script" custom-data='
+                <button class="button-actual" style="" custom-on-click="run_script" custom-data='
                 {"name":"alertw","args":["Hello world"]}
                 '>
-                <div class="button-contents">
-                    <img
+                <span class="button-contents">
+                    <img py-click="clicked_button"
                             class="button-img"
-                            src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/button-default.png"
+                            src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/button-default.png"
                             alt="Button image">
-                    <div class="button-text">
+                    <div class="button-text" inert>
                         N!
                     </div>
-                </div>
+                </span>
                 </button>
-            </div>
+            </span>
         </template>
         <template id="popup-screen-template">
             <div class="" style="
@@ -58,60 +59,60 @@
                     name="8Bit-Wonder"
                     class="background-music"
                     id="background-music1"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/8bit Wonder.mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/8bit Wonder.mp3"
                     loop></audio>
             <audio
                     name="bit18"
                     class="background-music"
                     id="background-music2"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/bit18.mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/bit18.mp3"
                     loop></audio>
             <audio
                     name="COTR Uncut"
                     class="background-music"
                     id="background-music3"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Full).mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Full).mp3"
                     loop></audio>
             <audio
                     name="COTR Part 1"
                     class="background-music"
                     id="background-music4"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Chase).mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Chase).mp3"
                     loop></audio>
             <audio
                     name="COTR Part 2"
                     class="background-music"
                     id="background-music5"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Waste).mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Waste).mp3"
                     loop></audio>
             <audio
                     name="Synthetic Fields"
                     class="background-music"
                     id="background-music6"
-                    src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Synthetic%20Fields.mp3"
+                    src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Synthetic%20Fields.mp3"
                     loop></audio>
 
 
         </div>
         <div class="header">
-            <span>
-                <a href="./index.html" style="cursor:pointer; align-content:start; position:relative; left:10px; top:10%; margin:0px;">
+            <div style="height:inherit; padding:10px">
+                <a href="./index.html" style="cursor:pointer; text-decoration: none;">
                     <img alt="HiWare Logo" src="./logo.png" height="80%" style="">
                 </a>
-            </span>
-            <span>
-                <span hidden class="button" style="position:fixed; top:10px; left:240px">
+            </div>
+            <div style="padding:10px">
+                <span hidden class="button" style="position: relative; right:5px">
                     {
-                        "text":"⚙️",
+                        "text":"@",
                         "wh":[
-                            "50px",
+                            "40px",
                             "40px"
                         ],
                         "on-click":"open_settings",
-                        "text-style":"font-size:22px"
+                        "text-style":"scale:200%; font-family:Webdings;"
                     }
                 </span>
-            </span>
+            </div>
 
         </div>
 
@@ -133,7 +134,42 @@
             <place-holder class="popup-screen-template" id="welcome-screen">
                 <data value="fill-from-content">
                     <h1>🎉Welcome to the open Beta!🎉</h1>
-                    <small>Click offward of this welcome box to close it.</small>
+                    <x-br></x-br>
+                    <div>
+                        <span style="font-size:125%">
+                            How would you like the music?
+                        </span>
+                        <br>
+                        <small>
+                            You can change this in settings.
+                        </small>
+                    </div>
+                    <div class="button">
+                        {
+                            "text":"On",
+                            "wh":[
+                                "80%",
+                                "40px"
+                            ],
+                            "on-click": "music_on"
+                        }
+                    </div>
+                    <div class="button">
+                        {
+                            "text":"Off",
+                            "wh":[
+                                "80%",
+                                "40px"
+                            ],
+                            "on-click": "music_off"
+                        }
+                    </div>
+                    <x-br></x-br>
+                    <small>
+                        You can find credits in the settings menu.
+                        <br>
+                        Click offward of this welcome box to close it.
+                    </small>
                 </data>
             </place-holder>
             <place-holder class="popup-screen-template" id="settings" hidden>
@@ -143,7 +179,7 @@
                         <legend>Audio</legend>
                         <span>
                             <label for="music-slider">Music Volume</label>
-                            <input id="music-slider" type="range" min="0" max="100" value="50" width="20px">
+                            <input id="music-slider" type="range" min="0" max="100" value="0" width="20px">
                         </span>
                         <!--<div class="styled-break"></div>-->
                         <br>
@@ -156,7 +192,6 @@
                                 <option value="COTR Part 2">COTR Part 2</option>
                                 <option value="COTR Uncut">COTR Uncut</option>
                                 <option value="Synthetic Fields">Synthetic Fields</option>
-
                             </select>
                         </span>
                         <x-br></x-br>
@@ -188,57 +223,69 @@
                     </fieldset>
                 </data>
             </place-holder>
-            <h1 id="Title">Test site</h1>
-            <p id="helptext">Press the button to generate a random number with some text</p>
-            <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
-            <div class="button">
-                {"text":"Generate","wh":["300px", "69px"],"on-click":"generate"}
-            </div>
-            <div class="button">
-                {
-                    "text":"Alert World",
-                    "wh":[
-                        "600px",
-                        "69px"
-                    ],
-                    "custom-data":{
-                        "name":"alert.py",
-                        "args":[
-                            "Hello world"
-                        ]
-                    }
-                }
-            </div>
-            <div class="button">
-                {
-                    "text":"Print World",
-                    "wh":[
-                        "600px",
-                        "69px"
-                    ],
-                    "custom-data":{
-                        "name":"alert.py",
-                        "args":[
-                            "Hello world"
+
+
+
+
+
+
+
+
+            <main>
+                <h1 id="Title">Test site</h1>
+                <p id="helptext">Press the button to generate a random number with some text</p>
+                <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
+                <br>
+                <div class="button">
+                    {"text":"Generate","wh":["200px", "69px"],"on-click":"generate"}
+                </div>
+                <br>
+                <div class="button">
+                    {
+                        "text":"Alert World",
+                        "wh":[
+                            "300px",
+                            "69px"
                         ],
-                        "func":"alt_print"
+                        "custom-data":{
+                            "name":"alert.py",
+                            "args":[
+                                "Hello world"
+                            ]
+                        }
                     }
-                }
-            </div>
+                </div>
+                <br>
+                <div class="button">
+                    {
+                        "text":"Print World",
+                        "wh":[
+                            "300px",
+                            "69px"
+                        ],
+                        "custom-data":{
+                            "name":"alert.py",
+                            "args":[
+                                "Hello world"
+                            ],
+                            "func":"alt_print"
+                        }
+                    }
+                </div>
+                <br>
+                <div id="output">The python script is loading or is broken.</div>
+            </main>
 
-
-
-            <div id="output">The python script is loading or is broken.</div>
         </div>
         <script
                 type="py"
-                src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/main.py"
-                config="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json">
+                src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/main.py"
+                config="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json">
         </script>
         <script
                 type="py"
-                src="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py"
-                config="./8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json"
+                src="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py"
+                config="./unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json"
                 worker
                 name="alertw">
         </script>
