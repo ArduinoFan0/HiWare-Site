@@ -132,7 +132,7 @@
                 </span>
             </div>
             <div class="footer">
-                <col- style="padding:8px; width:calc(100% - 16px)">
+                <col- style="padding:8px; width:calc(100% - 36px)">
                     <row- style="padding:0px; width:inherit">
                         <a href="mailto:">Contact</a>
                     </row->
@@ -341,17 +341,22 @@
                     <h4>A rapidly changing random number:</h4>
                     <div id="rapid-random">Not yet running!</div>
                 </div>
-                <div class="user-mode-element" style="height:100%">
-                    <div style="height:100%"></div>
+                <div class="user-mode-element" style="height:calc(100% - 80px)">
+
                     <a-scene>
                         <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
                         <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
                         <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
                         <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
                         <a-sky color="#ECECEC"></a-sky>
-                        <h1 style="position:absolute; bottom:100%">
-                            Oops! This resource failed to load. Please reload the page.
-                        </h1>
+                        <row- style="position:fixed; top:100px; left:0%; ">
+                            <div style="width:100%"></div>
+                            <h1 style="text-align:center; width:100%">
+                                Oops! This resource failed to load. Please reload the page.
+                            </h1>
+                            <div style="width:100%"></div>
+                        </row->
+
                     </a-scene>
                 </div>
 
