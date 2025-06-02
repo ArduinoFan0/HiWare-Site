@@ -468,11 +468,7 @@ try:
             settings_page.removeAttribute("hidden")
         except AttributeError:
             pass
-    async def loop():
-        document.querySelector('#rapid-random').innerText = random.randint(1, 100)
-        await apply_settings(None)
-        schedule(77, loop)
-    await loop()
+
     await sync_cookies()
     secret_answer = hashlib.sha256(secret_question.encode()).hexdigest()
 
@@ -512,6 +508,24 @@ try:
                 element.removeAttribute("hidden")
             developer_mode = False
     await try_devkey(None, quiet=True, force_cookie=True)
+    class VR():
+        def __init__(self):
+            self.x = 0
+            self.y = 10
+            self.z = 0
+        def update(self):
+            rig = document.getElementById("rig")
+            rig.setAttribute("position", f"{self.x},{self.y} {self.z}")
+    vr_player = VR()
+    async def joystick(event):
+        x = event.detail.x
+        y = event.detail.y
+    async def loop():
+        document.querySelector('#rapid-random').innerText = random.randint(1, 100)
+        await apply_settings(None)
+        schedule(77, loop)
+        vr_player.update()
+    await loop()
 except BaseException as e:
     def on_exception(my_e):
         raise my_e
