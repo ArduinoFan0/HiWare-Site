@@ -378,14 +378,14 @@
 
                         <a-entity id="rig" position="25 10 0">
                             <a-entity
-                                meta-touch-controls="hand: left; model: true"
+                                meta-touch-controls="hand: left; model: false"
                                 thumbstick-logging
                                 py-thumbstickmoved="vr_joystick"
                             >
                                 <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-left" rotation="0 0 0"></a-gltf-model>
                             </a-entity>
                             <a-entity
-                                    meta-touch-controls="hand: right; model: true"
+                                    meta-touch-controls="hand: right; model: false"
                                     rotation="0 0 0"
                                     thumbstick-logging
                                     py-abuttondown="vr_rise"
