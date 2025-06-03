@@ -529,18 +529,24 @@ try:
             self.rotation += self.r_velocity
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
             rig.setAttribute("rotation", f"0 {self.rotation} 0")
+            gizmo = document.getElementsByClassName('a-debug')[0]
+            gizmo_parent = gizmo.parentElement
+            rot = gizmo_parent.getAttribute('rotation')
+            rot_strnums = rot.split(' ')
+            rot_nums = [str(-int(i)) for i in rot_strnums]
+            gizmo.setAttribute('rotation', ' '.join(rot_nums))
     vr_player = VR()
 
 
     async def vr_joystick(event):
         x = event.detail.x
-        y = event.detail.y
+        y = -event.detail.y
         direction = math.atan2(y, x) * 180 / math.pi
         strength = math.sqrt(x*x + y*y)
         direction += vr_player.rotation + 180
         direction = direction * math.pi / 180
         x = math.cos(direction) * -strength
-        y = math.sin(direction) * -strength
+        y = math.sin(direction) * strength
         vr_player.x_velocity = x / 10
         vr_player.z_velocity = y / 10
     async def vr_look(event):
