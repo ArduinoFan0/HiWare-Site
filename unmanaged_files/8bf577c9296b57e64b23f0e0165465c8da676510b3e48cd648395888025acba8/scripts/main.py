@@ -537,9 +537,9 @@ try:
         y = event.detail.y
         direction = math.atan2(y, x) * 180 / math.pi
         strength = math.sqrt(x*x + y*y)
-        direction += vr_player.rotation
+        direction += vr_player.rotation + 90
         direction = direction * math.pi / 180
-        x = math.sin(direction) * strength
+        x = math.sin(direction) * -strength
         y = math.cos(direction) * strength
         vr_player.x_velocity = x / 10
         vr_player.z_velocity = y / 10
