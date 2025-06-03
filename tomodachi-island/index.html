@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="" style>
+    <head>
+        <noscript><style> .jsonly { display: none } </style></noscript>
+        <script src="/HiWare-Site/mini-coi.js"></script>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=0.0" />
+        <title>HiWare</title>
+        <link rel="icon" href="/HiWare-Site/favicon.png">
+        <link rel="stylesheet" href="/HiWare-Site/stylesheets/default-style.css">
+        <link rel="stylesheet" href="./my_.css">
+        <template id="button-template">
+            <div class="button-container">
+
+                <!-- previously used py-click="..." -->
+                <button class="button-actual" style="" custom-on-click="run_script" custom-data='
+                {"name":"alertw","args":["Hello world"]}
+                '>
+                <span class="button-contents">
+                    <img py-click="clicked_button"
+                            class="button-img"
+                            src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/button-default.png"
+                            alt="Button image">
+                    <div class="button-text" inert>
+                        N!
+                    </div>
+                </span>
+                </button>
+            </div>
+        </template>
+        <template id="popup-screen-template">
+            <div class="" style="
+                background-color:#00000070;
+                width:100%;
+                height:100%;
+                position:fixed;
+                left:0px;
+                top:0px;
+                z-index:100000001;
+            ">
+                <div py-click="hide" style="
+                    background-color:#00a7;
+                    width:100%;
+                    height:100%;
+                    z-index:100000001;
+                    margin:0px;
+                    position:fixed;
+                "></div>
+                <div class="popup-box">
+                    <data value="fill-from-content"></data>
+                </div>
+            </div>
+        </template>
+        <template id="terms-of-service-template">
+            <fieldset>
+                <legend>Terms of Service</legend>
+                <details>
+                    <summary>Expand</summary>
+                    <div id="terms-of-service-text">
+                    <p>1. By visiting this website, you agree to the terms of service.
+                    </p>
+                    <p>2. The use of cookies:
+                    Cookies are small files stored on your computer that manage
+                    things like preferences and times visited. We do not collect
+                    cookies.
+                    </p>
+                </div>
+                </details>
+            </fieldset>
+        </template>
+        <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css">
+        <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
+        <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    </head>
+    <body style="height:100%">
+        <div id="audio_container" hidden>
+            <audio
+                    name="8Bit-Wonder"
+                    class="background-music"
+                    id="background-music1"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/8bit Wonder.mp3"
+                    loop></audio>
+            <audio
+                    name="bit18"
+                    class="background-music"
+                    id="background-music2"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/bit18.mp3"
+                    loop></audio>
+            <audio
+                    name="COTR Uncut"
+                    class="background-music"
+                    id="background-music3"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Full).mp3"
+                    loop></audio>
+            <audio
+                    name="COTR Part 1"
+                    class="background-music"
+                    id="background-music4"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Chase).mp3"
+                    loop></audio>
+            <audio
+                    name="COTR Part 2"
+                    class="background-music"
+                    id="background-music5"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Call%20Of%20The%20Rytmitron%20(Waste).mp3"
+                    loop></audio>
+            <audio
+                    name="Synthetic Fields"
+                    class="background-music"
+                    id="background-music6"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Synthetic%20Fields.mp3"
+                    loop></audio>
+            <audio
+                    name="tlphoto"
+                    class="background-music"
+                    id="background-music-e1"
+                    src="./031.%20Photo%20Studio.mp3"
+                    loop></audio>
+
+
+
+        </div>
+        <header class="header">
+            <div style="height:inherit; padding:10px">
+                <a href="/HiWare-Site/index.html" style="cursor:pointer; text-decoration: none;">
+                    <img alt="HiWare Logo" src="/HiWare-Site/logo.png" height="80%" style="">
+                </a>
+            </div>
+            <div style="padding:10px">
+                <span hidden class="button" style="position: relative; right:5px">
+                    {
+                        "text":"@",
+                        "wh":[
+                            "40px",
+                            "40px"
+                        ],
+                        "on-click":"open_settings",
+                        "text-style":"scale:200%; font-family:Webdings;"
+                    }
+                </span>
+            </div>
+            <div class="footer">
+                <col- style="padding:8px; width:calc(100% - 36px)">
+                    <row- style="padding:0px; width:inherit">
+                        <a href="mailto:">Contact</a>
+                    </row->
+                    <row- style="padding:0px; height:inherit">
+                        <div class="developer-mode-element" hidden>DEVELOPER MODE</div>
+                        <div class="developer-mode-element" hidden>DEVELOPER MODE</div>
+                    </row->
+                </col->
+            </div>
+        </header>
+
+
+        <div id="enable-js-message" style="text-align:center">
+            <noscript>
+                <h1>Please enable JavaScript to access this page.</h1>
+            </noscript>
+            <div class="jsonly">
+                <h3 id="loading-text-1">Loading scripts...</h3>
+                <br>
+                <img src="/HiWare-Site/spinner.png" alt="loading..." class="loading-icon" height="64px">
+            </div>
+        </div>
+
+
+        <div id="js-only-content" hidden style="text-align:center;height:100%">
+            <place-holder class="popup-screen-template" id="welcome-screen">
+                <data value="fill-from-content">
+                    <h1>🎉Welcome to the open Beta!🎉</h1>
+                    <x-br></x-br>
+                    <div>
+                        <span style="font-size:125%">
+                            How would you like the music?
+                        </span>
+                        <br>
+                        <small>
+                            You can change this in settings.
+                        </small>
+                    </div>
+                    <div class="button">
+                        {
+                            "text":"On",
+                            "wh":[
+                                "80%",
+                                "40px"
+                            ],
+                            "on-click": "music_on"
+                        }
+                    </div>
+                    <div class="button">
+                        {
+                            "text":"Off",
+                            "wh":[
+                                "80%",
+                                "40px"
+                            ],
+                            "on-click": "music_off"
+                        }
+                    </div>
+                    <x-br></x-br>
+                    <place-holder class="terms-of-service-template">
+                        This content failed to load.
+                    </place-holder>
+                    <small>
+                        You can find credits in the settings menu.
+                        <br>
+                        Click offward of this welcome box to close it.
+                    </small>
+                </data>
+            </place-holder>
+            <place-holder class="popup-screen-template" id="settings" hidden>
+                <data value="fill-from-content">
+                    <h1>Settings</h1>
+                    <fieldset>
+                        <legend>Audio</legend>
+                        <span>
+                            <label for="music-slider">Music Volume</label>
+                            <input id="music-slider" type="range" min="0" max="100" value="0" width="20px">
+                        </span>
+                        <!--<div class="styled-break"></div>-->
+                        <br>
+                        <span>
+                            <label for="music-type">Music Type</label>
+                            <select id="music-type">
+                                <option value="tlphoto">Tomodachi Life: Photo Studio</option>
+                                <option value="bit18">BIT18 Ultimate</option>
+                                <option value="8Bit-Wonder">8Bit Wonder</option>
+                                <option value="COTR Part 1">COTR Part 1</option>
+                                <option value="COTR Part 2">COTR Part 2</option>
+                                <option value="COTR Uncut">COTR Uncut</option>
+                                <option value="Synthetic Fields">Synthetic Fields</option>
+                            </select>
+                        </span>
+                        <x-br></x-br>
+                        <span>
+                            <label for="sfx-vol">SFX Volume</label>
+                            <input id="sfx-vol" type="range" min="0" max="100" value="0">
+                        </span>
+                    </fieldset>
+                    <place-holder class="terms-of-service-template">
+                        This content failed to load.
+                    </place-holder>
+                    <fieldset>
+                        <legend>Credits</legend>
+                        <div style="font-weight:bold; text-align:left">
+                            From <a href="https://g.co/kgs/49AXg9K" target="_blank">Martin Linda</a>... of the Rytmik Ultimate team: The demo songs
+                        </div>
+                        <ul style="text-align:left">
+                            <li>BIT18 Ultimate</li>
+                            <li><i>"COTR" </i>: Call of the Rytmitron</li>
+                            <li>Synthetic Fields (Rytmik Lite)</li>
+                            <li>8Bit Wonder</li>
+                        </ul>
+                        <x-br></x-br>
+                        <div style="font-weight:bold; text-align:left">Help from:</div>
+                        <ul style="text-align:left">
+                            <li>
+                                <a href="https://chatgpt.com/" target="_blank"><bold>ChatGPT</bold></a>
+                                <br>
+                                ⤷Created by OpenAI
+                            </li>
+                        </ul>
+                    </fieldset>
+                    <fieldset>
+                        <legend>
+                            Developer Access Key
+                        </legend>
+                        <input type="text" id="devkey-input" placeholder="Type key here..." py-blur="try_devkey">
+                    </fieldset>
+                </data>
+            </place-holder>
+
+
+
+
+
+
+
+
+            <main style="height:100%">
+                <div class="developer-mode-element">
+                    <h1 id="Title">Test site</h1>
+                    <p id="helptext">Press the button to generate a random number with some text</p>
+                    <input type="text" name="text_1" id="text_1" placeholder="Type some text here..." />
+                    <br>
+                    <row->
+                        <div class="button">
+                            {"text":"Generate","wh":["100%", "69px"],"on-click":"generate"}
+                        </div>
+                    </row->
+                    <div id="output">The python script is loading or is broken.</div>
+                    <x-br></x-br>
+                    <h4>Some different output buttons:</h4>
+                    <row->
+                        <div class="button">
+                            {
+                                "text":"Alert World",
+                                "wh":[
+                                    "100%",
+                                    "69px"
+                                ],
+                                "custom-data":{
+                                    "name":"alert.py",
+                                    "args":[
+                                        "Hello world"
+                                    ]
+                                }
+                            }
+                        </div>
+
+                        <div class="button">
+                            {
+                                "text":"Print World",
+                                "wh":[
+                                    "100%",
+                                    "69px"
+                                ],
+                                "custom-data":{
+                                    "name":"alert.py",
+                                    "args":[
+                                        "Hello world"
+                                    ],
+                                    "func":"alt_print"
+                                }
+                            }
+                        </div>
+                    </row->
+                    <x-br></x-br>
+                    <h4>A grid:</h4>
+                    <div style="width:60px; justify-self:center">
+                        <row->
+                            <col->a</col->
+                            <col->b</col->
+                            <col->c</col->
+                        </row->
+                        <row->
+                            <col->1</col->
+                            <col->2</col->
+                            <col->3</col->
+                        </row->
+                        <row->
+                            <col->x</col->
+                            <col->y</col->
+                            <col->z</col->
+                        </row->
+                    </div>
+                    <x-br></x-br>
+                    <h4>A rapidly changing random number:</h4>
+                    <div id="rapid-random">Not yet running!</div>
+                </div>
+                <div class="user-mode-element" style="height:100%">
+                    <h1 id="content-title"><span style="font-size:50%"><weak>Tourism </weak></span> Welcome to Tomodachi Life</h1>
+                    <img src="Tomodachi%20Island.png" alt="An image of the Tomodachi Life Island" width="70%">
+                    <br>
+                    <small>This is basically free promotion for Nintendo so if I get sued, it's their problem</small>
+                    <div>
+                        <video controls class="trailer" src="./Nintendo%203DS%20-%20Tomodachi%20Life.mp4"></video>
+                    </div>
+                    <fieldset>
+                        <legend style="font-family:'Comic Sans MS'">Points of Interest!</legend>
+                        <row- style="justify-content: space-evenly;">
+                            <figure style="width:30%">
+                                <img style="width:100%" src="./quirky-q's.jpg" alt="Quirky Questions Image">
+                                <figcaption>Quirky Questions</figcaption>
+                            </figure>
+                            <figure style="width:30%">
+                                <img style="width:100%" src="./TL_Mii_apartments_1.jpg" alt="Apartments Image">
+                                <figcaption>Apartments</figcaption>
+                            </figure>
+                        </row->
+                        <row- style="justify-content: space-evenly;">
+                            <figure style="width:30%">
+                                <img style="width:100%" src="./MiiNewsWelcome.webp" alt="News Image">
+                                <figcaption>Mii News</figcaption>
+                            </figure>
+                            <figure style="width:30%">
+                                <img style="width:100%" src="./concert%20hall.webp" alt="Concert Hall Image">
+                                <figcaption>Concert Hall</figcaption>
+                            </figure>
+                        </row->
+
+                    </fieldset>
+                </div>
+
+            </main>
+            <footer></footer>
+        </div>
+        <script
+                type="py"
+                src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/main.py"
+                config="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json">
+        </script>
+        <script
+                type="py"
+                src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/alert.py"
+                config="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/scripts/config/pyscript.json"
+                worker
+                name="alertw">
+        </script>
+    </body>
+</html>

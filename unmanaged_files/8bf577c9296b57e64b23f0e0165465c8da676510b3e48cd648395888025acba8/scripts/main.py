@@ -278,7 +278,10 @@ try:
     js_only_content = document.querySelector("#js-only-content")
     enable_js_msg.setAttribute("hidden", "hidden")
     js_only_content.removeAttribute('hidden')
-    output_div.innerText = "The Python script is running."
+    try:
+        output_div.innerText = "The Python script is running."
+    except AttributeError:
+        pass
     def navigate_from_element(src_element, dests=[]):
         try:
             current = src_element
@@ -521,10 +524,13 @@ try:
         x = event.detail.x
         y = event.detail.y
     async def loop():
-        document.querySelector('#rapid-random').innerText = random.randint(1, 100)
+        try:
+            document.querySelector('#rapid-random').innerText = random.randint(1, 100)
+        except AttributeError:
+            pass
         await apply_settings(None)
         schedule(77, loop)
-        vr_player.update()
+        #vr_player.update()
     await loop()
 except BaseException as e:
     def on_exception(my_e):
