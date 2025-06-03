@@ -532,6 +532,8 @@ try:
             gizmo = document.getElementsByClassName('a-debug')[0]
             gizmo_parent = gizmo.parentElement
             rot = gizmo_parent.getAttribute('rotation')
+            if rot is None:
+                rot = '0 0 0'
             rot_strnums = rot.split(' ')
             rot_nums = [str(-int(random.randint(0, 360))) for i in rot_strnums]
             gizmo.setAttribute('rotation', ' '.join(rot_nums))
