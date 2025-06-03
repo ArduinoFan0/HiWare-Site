@@ -12,6 +12,7 @@ try:
     import random, json, time, hashlib, math
     from threading import Thread
     from js import setTimeout
+    import js
     cookies = window.cookieStore
     import sys, traceback
     class secret_question_gen:
@@ -529,17 +530,21 @@ try:
             self.rotation += self.r_velocity
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
             rig.setAttribute("rotation", f"0 {self.rotation} 0")
+            anchor = document.querySelector('#gizmo-anchor')
             gizmo = document.getElementsByClassName('a-debug')[0]
-            gizmo_parent = gizmo.parentElement.parentElement
-            rot = list(gizmo_parent.object3D.rotation.to_py())
+            #position = list(anchor.object3D.position.to_py())
+            position = js.THREE.Vector3.new()
+            anchor.object3D.getWorldPosition(position)
+            position = list(position.to_py())
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
-            rot = f"{rot[0]} {rot[1]} {rot[2]}"
+            pos = f"{position[0]} {position[1]} {position[2]}"
 
-            if rot is None:
-                rot = '0 0 0'
-            rot_strnums = str(rot).split(' ')
-            rot_nums = [str(-int(i)) for i in rot_strnums]
-            gizmo.setAttribute('rotation', ' '.join(rot_nums))
+            if pos is None:
+                pos = '0 0 0'
+            #rot_strnums = str(rot).split(' ')
+            #rot_nums = [str(-float(i) * 180 / math.pi) for i in rot_strnums]
+            gizmo.setAttribute('position', pos)
+
     vr_player = VR()
 
 
@@ -574,7 +579,7 @@ try:
         try:
             vr_player.update()
         except BaseException as e:
-            print(f"{type(e).__name__} {e}")
+            print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
     await loop()
 except BaseException as e:
     def on_exception(my_e):

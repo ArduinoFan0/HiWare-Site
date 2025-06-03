@@ -393,12 +393,13 @@
                                     py-thumbstickmoved="vr_look"
 
                             >
-                                <a-entity rotation="0 0 0">
-                                    <a-gltf-model class="a-debug" src="#gizmo" position="0 0 -0.5" rotation="0 0 0"></a-gltf-model>
-                                </a-entity>
+                                <a-entity position="0 0 -0.3" id="gizmo-anchor"></a-entity>
                             </a-entity>
-                            <a-entity id="camera" camera wasd-controls look-controls></a-entity>
+                            <a-entity id="camera" camera wasd-controls look-controls>
+                            </a-entity>
+
                         </a-entity>
+                        <a-gltf-model class="a-debug" scale="0.5 0.5 0.5" src="#gizmo" rotation="0 0 0"></a-gltf-model>
                         <row- style="position:fixed; top:100px; left:0%; width:100% ">
                             <div style="width:50%"></div>
                             <h1 style="text-align:center; width:100%">
