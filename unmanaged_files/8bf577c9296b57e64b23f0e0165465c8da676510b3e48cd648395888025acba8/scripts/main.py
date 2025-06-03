@@ -533,7 +533,7 @@ try:
             gizmo_parent = gizmo.parentElement
             rot = gizmo_parent.getAttribute('rotation')
             rot_strnums = rot.split(' ')
-            rot_nums = [str(-int(i)) for i in rot_strnums]
+            rot_nums = [str(-int(random.randint(0, 360))) for i in rot_strnums]
             gizmo.setAttribute('rotation', ' '.join(rot_nums))
     vr_player = VR()
 
