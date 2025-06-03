@@ -519,17 +519,18 @@ try:
             self.z_velocity = 0
         def update(self):
             rig = document.getElementById("rig")
+            self.z += self.z_velocity
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
     vr_player = VR()
     async def vr_joystick(event):
         x = event.detail.x
         y = event.detail.y
-        vr_player.x += x
-        vr_player.y += y
+        vr_player.x += x / 10
+        vr_player.z += y / 10
     def vr_fall(event):
-        vr_player.z_velocity = -1
+        vr_player.z_velocity = -0.1
     def vr_rise(event):
-        vr_player.z_velocity = 1
+        vr_player.z_velocity = 0.1
     def vr_ground(event):
         vr_player.z_velocity = 0
     async def loop():
