@@ -537,7 +537,7 @@ try:
         y = event.detail.y
         direction = math.atan2(y, x) * 180 / math.pi
         strength = math.sqrt(x*x + y*y)
-        direction += vr_player.rotation + 90
+        direction += vr_player.rotation + 180
         direction = direction * math.pi / 180
         x = math.cos(direction) * -strength
         y = math.sin(direction) * strength
@@ -546,7 +546,7 @@ try:
     async def vr_look(event):
         x = event.detail.x
         y = event.detail.y
-        vr_player.r_velocity = x * 5
+        vr_player.r_velocity = x * -5
     def vr_fall(event):
         vr_player.y_velocity = -0.1
     def vr_rise(event):
