@@ -516,21 +516,33 @@ try:
             self.x = 0
             self.y = 10
             self.z = 0
+            self.z_velocity = 0
         def update(self):
             rig = document.getElementById("rig")
-            rig.setAttribute("position", f"{self.x},{self.y} {self.z}")
+            rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
     vr_player = VR()
-    async def joystick(event):
+    async def vr_joystick(event):
         x = event.detail.x
         y = event.detail.y
+        vr_player.x += x
+        vr_player.y += y
+    def vr_fall(event):
+        vr_player.z_velocity = -1
+    def vr_rise(event):
+        vr_player.z_velocity = 1
+    def vr_ground(event):
+        vr_player.z_velocity = 0
     async def loop():
         try:
             document.querySelector('#rapid-random').innerText = random.randint(1, 100)
         except AttributeError:
             pass
         await apply_settings(None)
-        schedule(77, loop)
-        #vr_player.update()
+        schedule(40, loop)
+        try:
+            vr_player.update()
+        except:
+            pass
     await loop()
 except BaseException as e:
     def on_exception(my_e):
