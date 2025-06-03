@@ -384,6 +384,7 @@
                             ></a-entity>
                             <a-entity
                                     meta-touch-controls="hand: right; model: true"
+                                    rotation="0 0 0"
                                     thumbstick-logging
                                     py-abuttondown="vr_rise"
                                     py-abuttonup="vr_ground"
@@ -392,8 +393,8 @@
                                     py-thumbstickmoved="vr_look"
 
                             >
-                                <a-entity>
-                                    <a-gltf-model class="a-debug" src="#gizmo" position="0 0 0.5"></a-gltf-model>
+                                <a-entity rotation="0 0 0">
+                                    <a-gltf-model class="a-debug" src="#gizmo" position="0 0 -0.5" rotation="0 0 0"></a-gltf-model>
                                 </a-entity>
                             </a-entity>
                             <a-entity id="camera" camera wasd-controls look-controls></a-entity>

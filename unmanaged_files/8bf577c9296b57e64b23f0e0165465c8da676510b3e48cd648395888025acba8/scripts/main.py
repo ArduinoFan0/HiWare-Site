@@ -530,8 +530,9 @@ try:
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
             rig.setAttribute("rotation", f"0 {self.rotation} 0")
             gizmo = document.getElementsByClassName('a-debug')[0]
-            gizmo_parent = gizmo.parentElement
-            rot = gizmo_parent.getAttribute('rotation')
+            gizmo_parent = gizmo.parentElement.parentElement
+            rot = dict(gizmo_parent.getAttribute('rotation').to_py())
+            rot = f"{rot['x']} {rot['y']} {rot['z']}"
             if rot is None:
                 rot = '0 0 0'
             rot_strnums = str(rot).split(' ')
