@@ -534,8 +534,8 @@ try:
             rot = gizmo_parent.getAttribute('rotation')
             if rot is None:
                 rot = '0 0 0'
-            rot_strnums = rot.split(' ')
-            rot_nums = [str(-int(random.randint(0, 360))) for i in rot_strnums]
+            rot_strnums = str(rot).split(' ')
+            rot_nums = [str(-int(i)) for i in rot_strnums]
             gizmo.setAttribute('rotation', ' '.join(rot_nums))
     vr_player = VR()
 
@@ -570,8 +570,8 @@ try:
         schedule(16, loop)
         try:
             vr_player.update()
-        except:
-            pass
+        except BaseException as e:
+            print(f"{type(e).__name__} {e}")
     await loop()
 except BaseException as e:
     def on_exception(my_e):
