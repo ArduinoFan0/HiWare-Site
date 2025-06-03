@@ -9,7 +9,7 @@ class hbmckshb():
     pass
 try:
     developer_mode = False
-    import random, json, time, hashlib
+    import random, json, time, hashlib, math
     from threading import Thread
     from js import setTimeout
     cookies = window.cookieStore
@@ -519,18 +519,34 @@ try:
             self.y_velocity = 0
             self.z_velocity = 0
             self.x_velocity = 0
+            self.rotation = 0
+            self.r_velocity = 0
         def update(self):
             rig = document.getElementById("rig")
             self.x += self.x_velocity
             self.y += self.y_velocity
             self.z += self.z_velocity
+            self.rotation += self.r_velocity
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
+            rig.setAttribute("rotation", f"0 {self.rotation} 0")
     vr_player = VR()
+
+
     async def vr_joystick(event):
         x = event.detail.x
         y = event.detail.y
+        direction = math.atan2(y, x) * 180 / math.pi
+        strength = math.sqrt(x*x + y*y)
+        direction += vr_player.rotation
+        direction = direction * math.pi / 180
+        x = math.sin(direction) * strength
+        y = math.cos(direction) * strength
         vr_player.x_velocity = x / 10
         vr_player.z_velocity = y / 10
+    async def vr_look(event):
+        x = event.detail.x
+        y = event.detail.y
+        vr_player.r_velocity = x
     def vr_fall(event):
         vr_player.y_velocity = -0.1
     def vr_rise(event):
