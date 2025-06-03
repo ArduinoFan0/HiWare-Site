@@ -540,7 +540,7 @@ try:
         direction += vr_player.rotation + 180
         direction = direction * math.pi / 180
         x = math.cos(direction) * -strength
-        y = math.sin(direction) * strength
+        y = math.sin(direction) * -strength
         vr_player.x_velocity = x / 10
         vr_player.z_velocity = y / 10
     async def vr_look(event):
