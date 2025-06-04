@@ -352,6 +352,7 @@
                             <a-asset-item id="gizmo" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo.glb"></a-asset-item>
                             <a-asset-item id="c-left" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/left-hand.glb"></a-asset-item>
                             <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
+                            <a-asset-item id="game-menu" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/menu.glb"></a-asset-item>
 
                         </a-assets>
                         <a-entity id="scene">
@@ -387,6 +388,7 @@
                                     py-thumbstickmoved="vr_joystick"
                                 >
                                     <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-left" rotation="0 0 0"></a-gltf-model>
+                                    <a-gltf-model src="#game-menu" position="0 0 0" rotation="0 0 0"></a-gltf-model>
                                 </a-entity>
                                 <a-entity
                                         meta-touch-controls="hand: right; model: false"
