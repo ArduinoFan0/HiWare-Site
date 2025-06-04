@@ -531,11 +531,17 @@ try:
             self.ljy = 0
             self.rjx = 0
             self.rjy = 0
+            self.colliding_feet = False
+            self.colliding_body = False
         def update(self):
             rig = document.getElementById("rig")
-            self.x += self.x_velocity
+            self.x += self.x_velocity * -self.colliding_body
+            if self.colliding_feet:
+                self.y_velocity = max(self.y_velocity, 0)
             self.y += self.y_velocity / self.target_fps
-            self.z += self.z_velocity
+            self.y += self.colliding_feet * 0.001
+
+            self.z += self.z_velocity * -self.colliding_body
             self.rotation += self.r_velocity
 
             self.y_velocity -= self.output_gravity / self.target_fps
@@ -594,14 +600,24 @@ try:
         x = event.detail.x
         y = event.detail.y
         vr_player.r_velocity = x * -5
-    def vr_fall(event):
-        return
-        vr_player.y_velocity = -0.1
     def vr_rise(event):
         vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
-    def vr_ground(event):
-        return 
-        vr_player.y_velocity = 0
+
+
+    def vr_player_collide(event):
+        if event.target.id == 'player-collider-feet':
+            vr_player.colliding_feet = True
+        elif event.target.id == 'player-collider-body':
+            vr_player.colliding_body = True
+
+
+    def vr_player_uncollide(event):
+        if event.target.id == 'player-collider-feet':
+            vr_player.colliding_feet = False
+        elif event.target.id == 'player-collider-body':
+            vr_player.colliding_body = False
+
+
     async def loop():
         try:
             document.querySelector('#rapid-random').innerText = random.randint(1, 100)
