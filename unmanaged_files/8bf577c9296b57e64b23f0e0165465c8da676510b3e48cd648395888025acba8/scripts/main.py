@@ -559,7 +559,7 @@ try:
                 self.y = 0
                 self.y_velocity = 0
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
-            rig.setAttribute("rotation", f"0 {self.rotation} 0")
+            rig.querySelector('#rig-rotate').setAttribute("rotation", f"0 {self.rotation} 0")
             anchor = document.querySelector('#gizmo-anchor')
             gizmo = document.getElementsByClassName('a-debug')[0]
             #position = list(anchor.object3D.position.to_py())
