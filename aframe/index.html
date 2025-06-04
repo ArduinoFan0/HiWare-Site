@@ -396,7 +396,7 @@
 
                             >
                                 <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-right" rotation="0 0 0"></a-gltf-model>
-                                <a-entity position="0 0 -0.3" id="gizmo-anchor"></a-entity>
+                                <a-entity position="0 0 -0.5" id="gizmo-anchor"></a-entity>
                             </a-entity>
                             <a-entity id="camera" position="0 1.524 0" camera wasd-controls="fly: false" look-controls="pointerLockEnabled: true">
                             </a-entity>
@@ -410,14 +410,44 @@
                                     py-obbcollisionended="vr_player_uncollide"
                             ></a-box>
                             <a-box
-                                    id="player-collider-body"
-                                    position="0 1.061 0"
-                                    scale="0.51 1.6 0.51"
+                                    id="player-collider-body-xp"
+                                    position="0.51 1.061 0"
+                                    scale="0.01 1.6 0.51"
                                     visible="false"
                                     obb-collider
                                     py-obbcollisionstarted="vr_player_collide"
                                     py-obbcollisionended="vr_player_uncollide"
                             ></a-box>
+                            <a-box
+                                    id="player-collider-body-xn"
+                                    position="-0.51 1.061 0"
+                                    scale="0.01 1.6 0.51"
+                                    visible="false"
+                                    obb-collider
+                                    py-obbcollisionstarted="vr_player_collide"
+                                    py-obbcollisionended="vr_player_uncollide"
+                            ></a-box>
+
+                            <a-box
+                                    id="player-collider-body-zp"
+                                    position="0 1.061 0.51"
+                                    scale="0.51 1.6 0.01"
+                                    visible="false"
+                                    obb-collider
+                                    py-obbcollisionstarted="vr_player_collide"
+                                    py-obbcollisionended="vr_player_uncollide"
+                            ></a-box>
+                            <a-box
+                                    id="player-collider-body-zn"
+                                    position="0 1.061 -0.51"
+                                    scale="0.51 1.6 0.01"
+                                    visible="false"
+                                    obb-collider
+                                    py-obbcollisionstarted="vr_player_collide"
+                                    py-obbcollisionended="vr_player_uncollide"
+                            ></a-box>
+
+
 
                         </a-entity>
                         <a-gltf-model class="a-debug" scale="0.5 0.5 0.5" src="#gizmo" rotation="0 0 0"></a-gltf-model>

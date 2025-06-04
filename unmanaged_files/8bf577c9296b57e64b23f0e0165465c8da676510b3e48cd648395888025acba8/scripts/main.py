@@ -533,17 +533,25 @@ try:
             self.rjy = 0
             self.collision_velocity = 0.001
             self.colliding_feet = False
-            self.colliding_body = False
+            self.colliding_body_x = False
+            self.colliding_body_z = False
+            self.colliding_body_xp = False
+            self.colliding_body_zp = False
+            self.colliding_body_xn = False
+            self.colliding_body_zn = False
+
+            self.squishing_x = False
+            self.squishing_z = False
         def update(self):
             rig = document.getElementById("rig")
-            self.x += self.x_velocity * (-1 if self.colliding_body else 1)
+            self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
             self.y += self.y_velocity / self.target_fps
             self.y += self.colliding_feet * self.collision_velocity
-            self.collision_velocity += 0.003
+            self.collision_velocity += 0.001
 
-            self.z += self.z_velocity * (-1 if self.colliding_body else 1)
+            self.z += min(max(self.z_velocity, -(not self.colliding_body_zn)), not self.colliding_body_zp)
             self.rotation += self.r_velocity
 
             self.y_velocity -= self.output_gravity / self.target_fps
@@ -609,17 +617,51 @@ try:
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
             vr_player.colliding_feet = True
-            vr_player.collision_velocity = 0.001
-        elif event.target.id == 'player-collider-body':
-            vr_player.colliding_body = True
-
+            vr_player.collision_velocity = 0.0001
+        else:
+            match event.target.id:
+                case 'player-collider-body-xp' | 'player-collider-body-xn':
+                    if vr_player.colliding_body_x:
+                        vr_player.squishing_x = True
+                    vr_player.colliding_body_x = True
+                case 'player-collider-body-zp' | 'player-collider-body-zn':
+                    if vr_player.colliding_body_z:
+                        vr_player.squishing_z = True
+                    vr_player.colliding_body_z = True
+            match event.target.id:
+                case 'player-collider-body-xp':
+                    vr_player.colliding_body_xp = True
+                case 'player-collider-body-zp':
+                    vr_player.colliding_body_zp = True
+                case 'player-collider-body-xn':
+                    vr_player.colliding_body_xn = True
+                case 'player-collider-body-zn':
+                    vr_player.colliding_body_zn = True
+        if vr_player.squishing_z and vr_player.squishing_z:
+            vr_player.y_velocity = 0
 
     def vr_player_uncollide(event):
         if event.target.id == 'player-collider-feet':
             vr_player.colliding_feet = False
-        elif event.target.id == 'player-collider-body':
-            vr_player.colliding_body = False
-
+        else:
+            match event.target.id:
+                case 'player-collider-body-xp' | 'player-collider-body-xn':
+                    if not vr_player.squishing_x:
+                        vr_player.colliding_body_x = False
+                    vr_player.squishing_x = False
+                case 'player-collider-body-zp' | 'player-collider-body-zn':
+                    if not vr_player.squishing_z:
+                        vr_player.colliding_body_z = False
+                    vr_player.squishing_z = False
+            match event.target.id:
+                case 'player-collider-body-xp':
+                    vr_player.colliding_body_xp = False
+                case 'player-collider-body-zp':
+                    vr_player.colliding_body_zp = False
+                case 'player-collider-body-xn':
+                    vr_player.colliding_body_xn = False
+                case 'player-collider-body-zn':
+                    vr_player.colliding_body_zn = False
 
     async def loop():
         try:
