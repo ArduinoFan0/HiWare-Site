@@ -530,7 +530,7 @@ try:
         def update(self):
             rig = document.getElementById("rig")
             self.x += self.x_velocity
-            self.y += self.y_velocity
+            self.y += self.y_velocity / self.target_fps
             self.z += self.z_velocity
             self.rotation += self.r_velocity
 
