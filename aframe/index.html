@@ -343,16 +343,18 @@
                 </div>
                 <div class="user-mode-element" style="height:calc(100% - 80px)">
                     <a-scene>
-                        <a-assets>
-
+                        <a-assets id="default-assets">
                             <img id="skybox-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/skybox-equirectangular.png"></img>
-                            <a-asset-item id="gizmo" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo.glb"></a-asset-item>
                             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
-                            <a-asset-item id="c-left" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/left-hand.glb"></a-asset-item>
-                            <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
                             <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
                         </a-assets>
-                        <a-entity class="scene">
+                        <a-assets>
+                            <a-asset-item id="gizmo" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo.glb"></a-asset-item>
+                            <a-asset-item id="c-left" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/left-hand.glb"></a-asset-item>
+                            <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
+
+                        </a-assets>
+                        <a-entity id="scene">
                             <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
                             <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
                             <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
@@ -360,18 +362,18 @@
 
                             <a-gltf-model src="#skybox" position="25 10 0"></a-gltf-model>
                             <a-plane src="#ground" height="500" width="500" rotation="-90 0 0"></a-plane>
-
+                            <a-entity id="xyz-balls">
+                                <a-sphere position="9 0 0"  radius="3" color="#FF0000"></a-sphere>
+                                <a-sphere position="0 9 0"  radius="3" color="#00FF00"></a-sphere>
+                                <a-sphere position="0 0 9"  radius="3" color="#0000FF"></a-sphere>
+                                <a-sphere position="-9 0 0" radius="3" color="#00FFFF"></a-sphere>
+                                <a-sphere position="0 -9 0" radius="3" color="#FF00FF"></a-sphere>
+                                <a-sphere position="0 0 -9" radius="3" color="#FFFF00"></a-sphere>
+                            </a-entity>
                         </a-entity>
 
 
-                        <a-entity class="xyz-balls">
-                            <a-sphere position="9 0 0"  radius="3" color="#FF0000"></a-sphere>
-                            <a-sphere position="0 9 0"  radius="3" color="#00FF00"></a-sphere>
-                            <a-sphere position="0 0 9"  radius="3" color="#0000FF"></a-sphere>
-                            <a-sphere position="-9 0 0" radius="3" color="#00FFFF"></a-sphere>
-                            <a-sphere position="0 -9 0" radius="3" color="#FF00FF"></a-sphere>
-                            <a-sphere position="0 0 -9" radius="3" color="#FFFF00"></a-sphere>
-                        </a-entity>
+
 
 
 

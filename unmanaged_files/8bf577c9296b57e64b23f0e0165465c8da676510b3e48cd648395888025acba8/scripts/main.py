@@ -570,6 +570,22 @@ try:
             self.z_velocity = y / 10
     vr_player = VR()
 
+    async def fetch_level_xml(path: str):
+        response = await window.fetch(path)
+        xml_text = await response.text()
+        return xml_text
+
+    def parse_xml(xml_text: str):
+        parser = window.DOMParser.new()
+        xml_doc = parser.parseFromString(xml_text, "application/xml")
+        return xml_doc
+    my_level = parse_xml(await fetch_level_xml('./level2.xml'))
+    assets = document.querySelector('#default-assets')
+    scene = document.querySelector('#scene')
+    level_assets = my_level.querySelector('body').getElementsByTagName('a-assets')[0]
+    level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
+    assets.replaceWith(level_assets)
+    scene.replaceWith(level_scene)
 
     async def vr_joystick(event):
         vr_player.ljx = event.detail.x
@@ -584,6 +600,7 @@ try:
     def vr_rise(event):
         vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
     def vr_ground(event):
+        return 
         vr_player.y_velocity = 0
     async def loop():
         try:
