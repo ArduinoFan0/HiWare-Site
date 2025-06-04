@@ -531,17 +531,19 @@ try:
             self.ljy = 0
             self.rjx = 0
             self.rjy = 0
+            self.collision_velocity = 0.001
             self.colliding_feet = False
             self.colliding_body = False
         def update(self):
             rig = document.getElementById("rig")
-            self.x += self.x_velocity * -self.colliding_body
+            self.x += self.x_velocity * -1 if self.colliding_body else 1
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
             self.y += self.y_velocity / self.target_fps
-            self.y += self.colliding_feet * 0.001
+            self.y += self.colliding_feet * self.collision_velocity
+            self.collision_velocity += 0.003
 
-            self.z += self.z_velocity * -self.colliding_body
+            self.z += self.z_velocity * -1 if self.colliding_body else 1
             self.rotation += self.r_velocity
 
             self.y_velocity -= self.output_gravity / self.target_fps
@@ -607,6 +609,7 @@ try:
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
             vr_player.colliding_feet = True
+            vr_player.collision_velocity = 0.001
         elif event.target.id == 'player-collider-body':
             vr_player.colliding_body = True
 
