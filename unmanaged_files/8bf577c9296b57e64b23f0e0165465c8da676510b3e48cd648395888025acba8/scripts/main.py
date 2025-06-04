@@ -527,6 +527,10 @@ try:
             self.gravity_mul = 1
             self.output_gravity = self.gravity * self.gravity_mul
             self.target_fps = 60
+            self.ljx = 0
+            self.ljy = 0
+            self.rjx = 0
+            self.rjy = 0
         def update(self):
             rig = document.getElementById("rig")
             self.x += self.x_velocity
@@ -554,26 +558,28 @@ try:
             #rot_strnums = str(rot).split(' ')
             #rot_nums = [str(-float(i) * 180 / math.pi) for i in rot_strnums]
             gizmo.setAttribute('position', pos)
-
+            x = self.ljx
+            y = -self.ljy
+            direction = math.atan2(y, x) * 180 / math.pi
+            strength = math.sqrt(x * x + y * y)
+            direction += self.rotation + 180
+            direction = direction * math.pi / 180
+            x = math.cos(direction) * -strength
+            y = math.sin(direction) * strength
+            self.x_velocity = x / 10
+            self.z_velocity = y / 10
     vr_player = VR()
 
 
     async def vr_joystick(event):
-        x = event.detail.x
-        y = -event.detail.y
-        direction = math.atan2(y, x) * 180 / math.pi
-        strength = math.sqrt(x*x + y*y)
-        direction += vr_player.rotation + 180
-        direction = direction * math.pi / 180
-        x = math.cos(direction) * -strength
-        y = math.sin(direction) * strength
-        vr_player.x_velocity = x / 10
-        vr_player.z_velocity = y / 10
+        vr_player.ljx = event.detail.x
+        vr_player.ljy = event.detail.y
     async def vr_look(event):
         x = event.detail.x
         y = event.detail.y
         vr_player.r_velocity = x * -5
     def vr_fall(event):
+        return
         vr_player.y_velocity = -0.1
     def vr_rise(event):
         vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
