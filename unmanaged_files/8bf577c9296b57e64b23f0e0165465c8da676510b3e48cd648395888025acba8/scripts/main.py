@@ -536,14 +536,14 @@ try:
             self.colliding_body = False
         def update(self):
             rig = document.getElementById("rig")
-            self.x += self.x_velocity * -1 if self.colliding_body else 1
+            self.x += self.x_velocity * (-1 if self.colliding_body else 1)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
             self.y += self.y_velocity / self.target_fps
             self.y += self.colliding_feet * self.collision_velocity
             self.collision_velocity += 0.003
 
-            self.z += self.z_velocity * -1 if self.colliding_body else 1
+            self.z += self.z_velocity * (-1 if self.colliding_body else 1)
             self.rotation += self.r_velocity
 
             self.y_velocity -= self.output_gravity / self.target_fps
