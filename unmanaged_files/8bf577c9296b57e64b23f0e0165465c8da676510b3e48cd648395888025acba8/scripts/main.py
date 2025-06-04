@@ -522,12 +522,22 @@ try:
             self.x_velocity = 0
             self.rotation = 0
             self.r_velocity = 0
+            self.gravity = 9.8
+            self.jump_height = 1
+            self.gravity_mul = 1
+            self.output_gravity = self.gravity * self.gravity_mul
+            self.target_fps = 60
         def update(self):
             rig = document.getElementById("rig")
             self.x += self.x_velocity
             self.y += self.y_velocity
             self.z += self.z_velocity
             self.rotation += self.r_velocity
+
+            self.y_velocity -= self.output_gravity / self.target_fps
+            if self.y < 0:
+                self.y = 0
+                self.y_velocity = 0
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
             rig.setAttribute("rotation", f"0 {self.rotation} 0")
             anchor = document.querySelector('#gizmo-anchor')
@@ -566,7 +576,7 @@ try:
     def vr_fall(event):
         vr_player.y_velocity = -0.1
     def vr_rise(event):
-        vr_player.y_velocity = 0.1
+        vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
     def vr_ground(event):
         vr_player.y_velocity = 0
     async def loop():

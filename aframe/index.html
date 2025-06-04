@@ -350,7 +350,7 @@
                             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
                             <a-asset-item id="c-left" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/left-hand.glb"></a-asset-item>
                             <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
-
+                            <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
                         </a-assets>
                         <a-entity class="scene">
                             <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
@@ -359,6 +359,7 @@
                             <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
 
                             <a-gltf-model src="#skybox" position="25 10 0"></a-gltf-model>
+                            <a-plane src="#ground" height="500" width="500" rotation="-90 0 0"></a-plane>
 
                         </a-entity>
 
@@ -398,7 +399,7 @@
                                 <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-right" rotation="0 0 0"></a-gltf-model>
                                 <a-entity position="0 0 -0.3" id="gizmo-anchor"></a-entity>
                             </a-entity>
-                            <a-entity id="camera" camera wasd-controls look-controls>
+                            <a-entity id="camera" position="0 1.524 0" camera wasd-controls="fly: false" look-controls="pointerLockEnabled: true">
                             </a-entity>
 
                         </a-entity>
