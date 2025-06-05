@@ -52,8 +52,8 @@
                     shadowCameraBottom: -500;
                     shadowCameraLeft: -500;
                     shadowCameraRight: 500;
-                    shadowMapHeight: 1048576;
-                    shadowMapWidth: 1048576;
+                    shadowMapHeight: 8192;
+                    shadowMapWidth: 8192;
                     "
             position="-100 100 100"></a-entity>
             <!-- Axis Spheres (XYZ markers) -->
