@@ -354,6 +354,9 @@
                             <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
                             <a-asset-item id="game-menu" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/menu.glb"></a-asset-item>
                             <a-asset-item id="game-menu-debug-mode" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/debug-button.glb"></a-asset-item>
+                            <a-asset-item id="game-menu-unstuck" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/unstuck-button.glb"></a-asset-item>
+                            <a-asset-item id="game-menu-test-button" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/test-button.glb"></a-asset-item>
+
                             <a-asset-item id="dot-cursor" scale="0.5 0.5 0.5" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/dot-cursor.glb"></a-asset-item>
 
                         </a-assets>
@@ -400,6 +403,23 @@
                                                     position="0.083782 0.090215 0.030299"
                                             ></a-sphere>
                                         </a-entity>
+                                        <a-entity class="a-button" id="button-unstuck" rotation="0 0 0">
+                                            <a-gltf-model src="#game-menu-unstuck" rotation="0 0 0"></a-gltf-model>
+                                            <a-sphere
+                                                    radius="0.01"
+                                                    class="ui"
+                                                    position="0.083782 0.093079 0.082221"
+                                            ></a-sphere>
+                                        </a-entity>
+                                        <a-entity class="a-button" id="button-test" rotation="0 0 0">
+                                            <a-gltf-model src="#game-menu-test-button" rotation="0 0 0"></a-gltf-model>
+                                            <a-sphere
+                                                    radius="0.01"
+                                                    class="ui"
+                                                    position="0.083782 0.038373 0.082141"
+                                            ></a-sphere>
+                                        </a-entity>
+
                                     </a-gltf-model>
                                 </a-entity>
                                 <a-entity

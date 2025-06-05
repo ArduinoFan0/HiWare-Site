@@ -658,9 +658,16 @@ try:
             touching_button = button_details['distance'] < 0.07
             if touching_button:
                 button_details['model'].setAttribute('position', f"0.01 0 0")
-                if button_details['button-id'] == 'button-debug':
-                    if clicked:
+                if clicked:
+                    if button_details['button-id'] == 'button-debug':
                         self.debug_mode = not self.debug_mode
+                    elif button_details['button-id'] == 'button-unstuck':
+                        self.x = 0
+                        self.z = 0
+                        self.y = 5
+                        self.y_velocity = 0
+                    elif button_details['button-id'] == 'button-test':
+                        self.rotation += 90
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
             self.switch_debug_mode(self.debug_mode) #
