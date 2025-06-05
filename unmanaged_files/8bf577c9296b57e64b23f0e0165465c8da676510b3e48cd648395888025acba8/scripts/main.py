@@ -547,7 +547,9 @@ try:
             self.look_up_down = 0
             self.look_up_down_v = 0
             self.in_vr = False
-
+            self.colliding_objects = {
+                'feet':[]
+            }
         def update(self):
             rig = document.getElementById("rig")
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
@@ -661,8 +663,14 @@ try:
         await vr_look(None)
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
-            vr_player.colliding_feet = True
-            vr_player.collision_velocity = 0.0001
+            if not event.detail.withEl.hasAttribute('id'):
+                event.detail.withEl.id = hashlib.sha256(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
+            if not event.detail.withEl.id in vr_player.colliding_objects['feet']:
+
+                vr_player.colliding_objects['feet'].append(event.detail.withEl.id)
+                if len(vr_player.colliding_objects['feet']) != 0:
+                    vr_player.colliding_feet = True
+                    vr_player.collision_velocity = 0.0001
         else:
             match event.target.id:
                 case 'player-collider-body-xp' | 'player-collider-body-xn':
@@ -687,7 +695,12 @@ try:
 
     def vr_player_uncollide(event):
         if event.target.id == 'player-collider-feet':
-            vr_player.colliding_feet = False
+            if not event.detail.withEl.hasAttribute('id'):
+                event.detail.withEl.id = hashlib.sha256(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
+            if event.detail.withEl.id in vr_player.colliding_objects['feet']:
+                vr_player.colliding_objects['feet'].remove(event.detail.withEl.id)
+                if len(vr_player.colliding_objects['feet']) == 0: vr_player.colliding_feet = False
+
         else:
             match event.target.id:
                 case 'player-collider-body-xp' | 'player-collider-body-xn':
