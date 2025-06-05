@@ -658,7 +658,7 @@ try:
             touching_button = button_details['distance'] < 0.07
             if touching_button:
                 button_details['model'].setAttribute('position', f"0.01 0 0")
-                if button_details['id'] == 'button-debug':
+                if button_details['button-id'] == 'button-debug':
                     if clicked:
                         self.debug_mode = not self.debug_mode
             else:
