@@ -561,7 +561,7 @@ try:
         class GameMenu():
             def __init__(self):
                 self.menu_obj = document.querySelector('a-scene').querySelector('#rig').querySelector('#virtual-menu')
-            def closest_button(self, cursor:Vector):
+            def closest_button(self, cursor:Vector, get_all:bool=False):
                 button_tmp = {'button-id':'None', 'distance':65535.0, 'model':None}
                 buttons = [button_tmp.copy()]
                 for button in self.menu_obj.getElementsByClassName('a-button'):
@@ -579,7 +579,7 @@ try:
                     else:
                         buttons.append(button_tmp.copy())
                 buttons.pop()
-                return buttons[0]
+                return buttons[0] if not get_all else buttons
         def __init__(self):
             self.x = 0
             self.y = 10
@@ -654,7 +654,8 @@ try:
             anchor_position = Vector(position)
             clicked = self.clicked
             self.clicked = False
-            button_details = self.menu.closest_button(anchor_position)
+            buttons = self.menu.closest_button(anchor_position, get_all=True)
+            button_details = buttons.pop(0)
             touching_button = button_details['distance'] < 0.07
             if touching_button:
                 button_details['model'].setAttribute('position', f"0.01 0 0")
@@ -670,6 +671,8 @@ try:
                         self.rotation += 90
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
+            for button in buttons:
+                button['model'].setAttribute('position', "0 0 0")
             self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
