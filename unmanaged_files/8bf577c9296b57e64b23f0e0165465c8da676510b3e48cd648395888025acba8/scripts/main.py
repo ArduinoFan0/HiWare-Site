@@ -663,7 +663,7 @@ try:
                         self.debug_mode = not self.debug_mode
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
-            self.switch_debug_mode(self.debug_mode)
+            self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
 
