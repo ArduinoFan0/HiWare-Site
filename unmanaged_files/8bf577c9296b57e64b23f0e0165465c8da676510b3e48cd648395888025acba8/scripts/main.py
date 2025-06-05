@@ -558,6 +558,28 @@ try:
         def __repr__(self):
             return f"Vector({self.x}, {self.y}, {self.z})"
     class VR():
+        class GameMenu():
+            def __init__(self):
+                self.menu_obj = document.querySelector('a-scene').querySelector('#rig').querySelector('#virtual-menu')
+            def closest_button(self, cursor:Vector):
+                button_tmp = {'button-id':'None', 'distance':65535.0, 'model':None}
+                buttons = [button_tmp]
+                for button in self.menu_obj.getElementsByClassName('a-button'):
+                    if button.hasAttribute('hidden'):
+                        continue
+                    button_tmp['button-id'] = str(button.getAttribute('id'))
+                    position = js.THREE.Vector3.new()
+                    button.querySelector('a-sphere').object3D.getWorldPosition(position)
+                    button_tmp['model'] = button.querySelector('a-gltf-model')
+                    position = list(position.to_py())
+                    button_pos = Vector(position)
+                    button_tmp['distance'] = button_pos.distance_to(cursor)
+                    if button_tmp['distance'] < buttons[0]['distance']:
+                        buttons.insert(0, button_tmp)
+                    else:
+                        buttons.append(button_tmp)
+                buttons.pop()
+                return buttons[0]
         def __init__(self):
             self.x = 0
             self.y = 10
@@ -590,9 +612,18 @@ try:
             self.look_up_down = 0
             self.look_up_down_v = 0
             self.in_vr = True
+            self.debug_mode = False
+            self.clicked = False
+            self.menu = self.GameMenu()
             self.colliding_objects = {
                 'feet':[]
             }
+        def switch_debug_mode(self, active:bool):
+            my_scene = document.getElementsByTagName('a-scene')[0]
+            if active:
+                my_scene.querySelector('.a-debug').setAttribute('src', '#gizmo')
+            else:
+                my_scene.querySelector('.a-debug').setAttribute('src', '#dot-cursor')
         def update(self):
             my_scene = document.getElementsByTagName('a-scene')[0]
             rig = my_scene.querySelector("#rig")
@@ -621,26 +652,18 @@ try:
             anchor.object3D.getWorldPosition(position)
             position = list(position.to_py())
             anchor_position = Vector(position)
-
-
-
-            debug_button = rig.querySelector('#button-debug')
-            debug_button_hitbox = debug_button.querySelector('a-sphere')
-            debug_button_graphic = debug_button.querySelector('a-gltf-model')
-
-
-
-
-
-            position2 = js.THREE.Vector3.new()
-            debug_button_hitbox.object3D.getWorldPosition(position2)
-            position2 = list(position2.to_py())
-            debug_button_position = Vector(position2)
-            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.03
-            if touching_debug_button:
-                debug_button_graphic.setAttribute('position', f"0.01 0 0")
+            clicked = self.clicked
+            self.clicked = False
+            button_details = self.menu.closest_button(anchor_position)
+            touching_button = button_details['distance'] < 0.07
+            if touching_button:
+                button_details['model'].setAttribute('position', f"0.01 0 0")
+                if button_details['id'] == 'button-debug':
+                    if clicked:
+                        self.debug_mode = not self.debug_mode
             else:
-                debug_button_graphic.setAttribute('position', "0 0 0")
+                button_details['model'].setAttribute('position', "0 0 0")
+            self.switch_debug_mode(self.debug_mode)
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
 
@@ -687,6 +710,11 @@ try:
             a = bool('a' in keys_pressed)
             s = bool('s' in keys_pressed)
             d = bool('d' in keys_pressed)
+            if 'i' in keys_pressed:
+                vr_player.debug_mode = not vr_player.debug_mode
+            if vr_player.debug_mode:
+                if 'o' in keys_pressed:
+                    vr_player.rotation += 15
             x = d-a
             y = s-w
         vr_player.ljx = x
@@ -717,15 +745,15 @@ try:
     async def key_pressed(event):
         if not event.key.lower() in keys_pressed:
             keys_pressed.append(event.key.lower())
-        await vr_joystick(None)
-        await vr_look(None)
+            await vr_joystick(None)
+            await vr_look(None)
 
     @when('keyup', '*')
     async def key_released(event):
         if event.key.lower() in keys_pressed:
             keys_pressed.remove(event.key.lower())
-        await vr_joystick(None)
-        await vr_look(None)
+            await vr_joystick(None)
+            await vr_look(None)
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
             if not event.detail.withEl.hasAttribute('id'):
@@ -796,7 +824,6 @@ try:
         try:
             vr_player.update()
         except BaseException as e:
-            return
             print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
     await loop()
 except BaseException as e:
