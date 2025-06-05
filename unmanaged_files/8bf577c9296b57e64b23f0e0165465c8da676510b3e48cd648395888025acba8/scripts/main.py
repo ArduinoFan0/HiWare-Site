@@ -589,7 +589,7 @@ try:
             self.squishing_z = False
             self.look_up_down = 0
             self.look_up_down_v = 0
-            self.in_vr = False
+            self.in_vr = True
             self.colliding_objects = {
                 'feet':[]
             }
@@ -622,11 +622,11 @@ try:
             position = list(position.to_py())
             anchor_position = Vector(position)
             debug_button = rig.querySelector('#button-debug')
-            position = js.THREE.Vector3.new()
-            debug_button.object3D.getWorldPosition(position)
-            position = list(position.to_py())
-            debug_button_position = Vector(position)
-            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.01
+            position2 = js.THREE.Vector3.new()
+            debug_button.object3D.getWorldPosition(position2)
+            position2 = list(position2.to_py())
+            debug_button_position = Vector(position2)
+            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.1
             if touching_debug_button:
                 debug_button.rotation = f"0 {random.randint(0, 360)} 0"
             else:
