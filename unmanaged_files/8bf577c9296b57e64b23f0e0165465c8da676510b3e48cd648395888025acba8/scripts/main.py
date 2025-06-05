@@ -514,6 +514,49 @@ try:
                 element.removeAttribute("hidden")
             developer_mode = False
     await try_devkey(None, quiet=True, force_cookie=True)
+
+
+    class Vector:
+        @overload
+        def __init__(self, x: float, y: float, z: float = 0) -> None: ...
+        @overload
+        def __init__(self, position: list[float]) -> None:
+            ...
+        @overload
+        def __init__(self, position: str, sep=' ') -> None:
+            ...
+        def __init__(self, x, y:float|str=0, z:float=0) -> None:
+            if isinstance(x, str):
+                assert isinstance(y, str), TypeError("Parameter 'sep' must be str if constructing from string")
+                position = [int(x.split(y)[i]) for i in range(len(x.split(y)))]
+                self.x = position[0]
+                self.y = position[1]
+                self.z = position[2]
+            elif isinstance(x, list):
+                self.x = x[0]
+                self.y = x[1]
+                self.z = x[2]
+            elif isinstance(x, float|int):
+                self.x = x
+                self.y = y
+                self.z = z
+        def distance_to(self, other: "Vector") -> float:
+            dx = other.x - self.x
+            dy = other.y - self.y
+            dz = other.z - self.z
+            return math.sqrt(dx * dx + dy * dy + dz * dz)
+
+        def to_list(self) -> list[float]:
+            return [self.x, self.y, self.z]
+
+        def __iter__(self):
+            yield self.x
+            yield self.y
+            yield self.z
+        def to_str(self, sep=' '):
+            return f"{self.x}{sep}{self.y}{sep}{self.z}"
+        def __repr__(self):
+            return f"Vector({self.x}, {self.y}, {self.z})"
     class VR():
         def __init__(self):
             self.x = 0
@@ -551,7 +594,8 @@ try:
                 'feet':[]
             }
         def update(self):
-            rig = document.getElementById("rig")
+            my_scene = document.getElementsByTagName('a-scene')[0]
+            rig = my_scene.querySelector("#rig")
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
@@ -570,12 +614,23 @@ try:
             rig.querySelector('#rig-rotate').setAttribute("rotation", f"0 {self.rotation} 0")
             rig.querySelector('#camera').setAttribute("rotation", f"{self.look_up_down} 0 0")
 
-            anchor = document.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
-            gizmo = document.getElementsByClassName('a-debug')[0]
+            anchor = my_scene.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
+            gizmo = my_scene.getElementsByClassName('a-debug')[0]
             #position = list(anchor.object3D.position.to_py())
             position = js.THREE.Vector3.new()
             anchor.object3D.getWorldPosition(position)
             position = list(position.to_py())
+            anchor_position = Vector(position)
+            debug_button = rig.querySelector('#button-debug')
+            position = js.THREE.Vector3.new()
+            debug_button.object3D.getWorldPosition(position)
+            position = list(position.to_py())
+            debug_button_position = Vector(position)
+            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.01
+            if touching_debug_button:
+                debug_button.rotation = f"0 {random.randint(0, 360)} 0"
+            else:
+                debug_button.rotation = "0 0 0"
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
 

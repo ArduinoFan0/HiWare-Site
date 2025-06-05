@@ -12,6 +12,7 @@
             <img id="skybox-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/skybox-equirectangular.png"></img>
             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
             <a-asset-item id="rock1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/rock1.glb"></a-asset-item>
+            <a-asset-item id="tree1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/tree.glb"></a-asset-item>
 
             <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
         </a-assets>
@@ -19,6 +20,8 @@
 
             <!-- Skybox model and textured ground -->
             <a-gltf-model src="#rock1" shadow="" position="25 0 0" obb-collider=""></a-gltf-model>
+            <a-gltf-model src="#tree1" shadow="" position="25 0 8" obb-collider=""></a-gltf-model>
+
             <a-gltf-model src="#game-menu" shadow="" position="8 1 8"></a-gltf-model>
 
             <a-plane src="#ground" height="100" width="100" rotation="-90 0 0" repeat="100 100" shadow="" obb-collider=""></a-plane>
