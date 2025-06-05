@@ -636,9 +636,9 @@ try:
             debug_button_hitbox.object3D.getWorldPosition(position2)
             position2 = list(position2.to_py())
             debug_button_position = Vector(position2)
-            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.1
+            touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.03
             if touching_debug_button:
-                debug_button_graphic.setAttribute('position', f"0 0.01 0")
+                debug_button_graphic.setAttribute('position', f"0.01 0 0")
             else:
                 debug_button_graphic.setAttribute('position', "0 0 0")
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
