@@ -786,6 +786,7 @@ try:
         try:
             vr_player.update()
         except BaseException as e:
+            return
             print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
     await loop()
 except BaseException as e:
