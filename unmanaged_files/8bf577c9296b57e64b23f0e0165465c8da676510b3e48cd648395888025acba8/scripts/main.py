@@ -578,7 +578,7 @@ try:
                         buttons.insert(0, button_tmp.copy())
                     else:
                         buttons.append(button_tmp.copy())
-                buttons.pop()
+                buttons.remove(button_tmp.copy())
                 return buttons[0] if not get_all else buttons
         def __init__(self):
             self.x = 0
@@ -672,7 +672,10 @@ try:
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
             for button in buttons:
-                button['model'].setAttribute('position', "0 0 0")
+                try:
+                    button['model'].setAttribute('position', "0 0 0")
+                except AttributeError:
+                    pass
             self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
