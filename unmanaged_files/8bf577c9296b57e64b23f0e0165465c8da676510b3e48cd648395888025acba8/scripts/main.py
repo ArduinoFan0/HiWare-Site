@@ -628,9 +628,9 @@ try:
             debug_button_position = Vector(position2)
             touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.1
             if touching_debug_button:
-                debug_button.rotation = f"0 {random.randint(0, 360)} 0"
+                debug_button.setAttribute('rotation', f"0 {random.randint(0, 360)} 0")
             else:
-                debug_button.rotation = "0 0 0"
+                debug_button.setAttribute('rotation', "0 0 0")
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
 
