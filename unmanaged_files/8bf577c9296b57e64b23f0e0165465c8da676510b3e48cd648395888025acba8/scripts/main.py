@@ -700,7 +700,8 @@ try:
     level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
     assets.replaceWith(level_assets)
     scene.replaceWith(level_scene)
-
+    async def trigger(event):
+        vr_player.clicked = True
     async def vr_joystick(event):
         try:
             x = event.detail.x
