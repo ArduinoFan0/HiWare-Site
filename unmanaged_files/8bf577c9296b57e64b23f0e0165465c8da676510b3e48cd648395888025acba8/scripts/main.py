@@ -578,7 +578,7 @@ try:
                         buttons.insert(0, button_tmp.copy())
                     else:
                         buttons.append(button_tmp.copy())
-                buttons.remove(button_tmp.copy())
+                buttons.remove({'button-id':'None', 'distance':65535.0, 'model':None})
                 return buttons[0] if not get_all else buttons
         def __init__(self):
             self.x = 0
