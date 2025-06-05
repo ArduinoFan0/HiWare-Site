@@ -563,7 +563,7 @@ try:
                 self.menu_obj = document.querySelector('a-scene').querySelector('#rig').querySelector('#virtual-menu')
             def closest_button(self, cursor:Vector):
                 button_tmp = {'button-id':'None', 'distance':65535.0, 'model':None}
-                buttons = [button_tmp]
+                buttons = [button_tmp.copy()]
                 for button in self.menu_obj.getElementsByClassName('a-button'):
                     if button.hasAttribute('hidden'):
                         continue
@@ -575,9 +575,9 @@ try:
                     button_pos = Vector(position)
                     button_tmp['distance'] = button_pos.distance_to(cursor)
                     if button_tmp['distance'] < buttons[0]['distance']:
-                        buttons.insert(0, button_tmp)
+                        buttons.insert(0, button_tmp.copy())
                     else:
-                        buttons.append(button_tmp)
+                        buttons.append(button_tmp.copy())
                 buttons.pop()
                 return buttons[0]
         def __init__(self):
