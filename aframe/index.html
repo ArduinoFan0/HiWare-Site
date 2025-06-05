@@ -391,7 +391,14 @@
                                     <a-gltf-model class="hands" scale="0.9 0.9 0.9" src="#c-left" rotation="0 0 0">
 <                                   </a-gltf-model>
                                     <a-gltf-model src="#game-menu" position="0 0 0" rotation="0 0 0">
-                                        <a-gltf-model id="button-debug" src="#game-menu-debug-mode" rotation="0 0 0"></a-gltf-model>
+                                        <a-entity id="button-debug" rotation="0 0 0">
+                                            <a-gltf-model src="#game-menu-debug-mode" rotation="0 0 0"></a-gltf-model>
+                                            <a-sphere
+                                                    radius="0.01"
+                                                    class="ui"
+                                                    position="0.083782 0.090215 -0.030299"
+                                            ></a-sphere>
+                                        </a-entity>
                                     </a-gltf-model>
                                 </a-entity>
                                 <a-entity
@@ -402,7 +409,7 @@
                                         py-thumbstickmoved="vr_look"
 
                                 >
-                                    <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-right" rotation="0 0 0"></a-gltf-model>
+                                    <a-gltf-model class="hands" scale="0.9 0.9 0.9" src="#c-right" rotation="0 0 0"></a-gltf-model>
                                     <a-entity position="0 0 -0.5" id="gizmo-anchor"></a-entity>
                                 </a-entity>
                                 <a-entity id="camera" position="0 1.524 0" camera>

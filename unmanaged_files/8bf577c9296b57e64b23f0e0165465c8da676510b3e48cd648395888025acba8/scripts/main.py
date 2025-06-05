@@ -621,16 +621,26 @@ try:
             anchor.object3D.getWorldPosition(position)
             position = list(position.to_py())
             anchor_position = Vector(position)
+
+
+
             debug_button = rig.querySelector('#button-debug')
+            debug_button_hitbox = debug_button.querySelector('a-sphere')
+            debug_button_graphic = debug_button.querySelector('a-gltf-model')
+
+
+
+
+
             position2 = js.THREE.Vector3.new()
-            debug_button.object3D.getWorldPosition(position2)
+            debug_button_hitbox.object3D.getWorldPosition(position2)
             position2 = list(position2.to_py())
             debug_button_position = Vector(position2)
             touching_debug_button = debug_button_position.distance_to(anchor_position) < 0.1
             if touching_debug_button:
-                debug_button.setAttribute('rotation', f"0 {random.randint(0, 360)} 0")
+                debug_button_graphic.setAttribute('position', f"0 0.01 0")
             else:
-                debug_button.setAttribute('rotation', "0 0 0")
+                debug_button_graphic.setAttribute('position', "0 0 0")
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
 
