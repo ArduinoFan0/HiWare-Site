@@ -9,6 +9,7 @@ class hbmckshb():
     pass
 try:
     developer_mode = False
+    keys_pressed = []
     import random, json, time, hashlib, math
     from threading import Thread
     from js import setTimeout
@@ -456,7 +457,8 @@ try:
                 break
             except AttributeError:
                 continue
-
+    def hide_elem(event):
+        event.target.setAttribute('hidden', True)
     @when("click", "*")
     async def click(event):
         global interacted
@@ -542,6 +544,10 @@ try:
 
             self.squishing_x = False
             self.squishing_z = False
+            self.look_up_down = 0
+            self.look_up_down_v = 0
+            self.in_vr = False
+
         def update(self):
             rig = document.getElementById("rig")
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
@@ -553,14 +559,16 @@ try:
 
             self.z += min(max(self.z_velocity, -(not self.colliding_body_zn)), not self.colliding_body_zp)
             self.rotation += self.r_velocity
-
+            self.look_up_down += self.look_up_down_v
             self.y_velocity -= self.output_gravity / self.target_fps
-            if self.y < 0:
+            if False:#self.y < 0:
                 self.y = 0
                 self.y_velocity = 0
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
             rig.querySelector('#rig-rotate').setAttribute("rotation", f"0 {self.rotation} 0")
-            anchor = document.querySelector('#gizmo-anchor')
+            rig.querySelector('#camera').setAttribute("rotation", f"{self.look_up_down} 0 0")
+
+            anchor = document.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
             gizmo = document.getElementsByClassName('a-debug')[0]
             #position = list(anchor.object3D.position.to_py())
             position = js.THREE.Vector3.new()
@@ -604,16 +612,53 @@ try:
     scene.replaceWith(level_scene)
 
     async def vr_joystick(event):
-        vr_player.ljx = event.detail.x
-        vr_player.ljy = event.detail.y
+        try:
+            x = event.detail.x
+            y = event.detail.y
+        except AttributeError:
+            w = bool('w' in keys_pressed)
+            a = bool('a' in keys_pressed)
+            s = bool('s' in keys_pressed)
+            d = bool('d' in keys_pressed)
+            x = d-a
+            y = s-w
+        vr_player.ljx = x
+        vr_player.ljy = y
     async def vr_look(event):
-        x = event.detail.x
-        y = event.detail.y
-        vr_player.r_velocity = x * -5
+        try:
+            x = event.detail.x
+            y = 0
+        except AttributeError:
+            w = bool('arrowup' in keys_pressed)
+            a = bool('arrowleft' in keys_pressed)
+            s = bool('arrowdown' in keys_pressed)
+            d = bool('arrowright' in keys_pressed)
+            x = d-a
+            y = w-s
+        vr_player.look_up_down_v = y * 3
+        vr_player.r_velocity = x * -3
+    @when('keydown', '*')
     def vr_rise(event):
-        vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
+        try:
+            if event.key == ' ':
+                vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
+        except AttributeError:
+            vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
 
 
+    @when('keydown', '*')
+    async def key_pressed(event):
+        if not event.key.lower() in keys_pressed:
+            keys_pressed.append(event.key.lower())
+        await vr_joystick(None)
+        await vr_look(None)
+
+    @when('keyup', '*')
+    async def key_released(event):
+        if event.key.lower() in keys_pressed:
+            keys_pressed.remove(event.key.lower())
+        await vr_joystick(None)
+        await vr_look(None)
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
             vr_player.colliding_feet = True

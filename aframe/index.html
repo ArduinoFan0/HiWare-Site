@@ -401,7 +401,9 @@
                                     <a-gltf-model class="hands" scale="0.5 0.5 0.5" src="#c-right" rotation="0 0 0"></a-gltf-model>
                                     <a-entity position="0 0 -0.5" id="gizmo-anchor"></a-entity>
                                 </a-entity>
-                                <a-entity id="camera" position="0 1.524 0" camera wasd-controls="fly: false" look-controls="pointerLockEnabled: true">
+                                <a-entity id="camera" position="0 1.524 0" camera>
+                                    <a-entity position="0 0 -1" id="gizmo-anchor-head"></a-entity>
+
                                 </a-entity>
                             </a-entity>
                             <a-box
@@ -464,8 +466,8 @@
                     </a-scene>
                     <row- style="position:fixed; top:100px; left:0%; width:100% ">
                         <div style="width:50%"></div>
-                        <h1 style="text-align:center; width:100%; z-index: 1;">
-                            You'll want to use a Meta Quest 2 for this.
+                        <h1 style="text-align:center; width:100%; z-index: 1;" py-click="hide_elem">
+                            Meta Quest 2 may be the preferred device. Click to dismiss.
                         </h1>
                         <div style="width:50%"></div>
                     </row->
