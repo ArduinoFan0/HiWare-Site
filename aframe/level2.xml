@@ -13,6 +13,7 @@
             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
             <a-asset-item id="rock1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/rock1.glb"></a-asset-item>
             <a-asset-item id="tree1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/tree-test.glb"></a-asset-item>
+            <a-asset-item id="coin" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/coin.glb"></a-asset-item>
 
             <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
         </a-assets>
@@ -20,10 +21,10 @@
 
             <!-- Skybox model and textured ground -->
             <a-gltf-model src="#rock1" shadow="" position="25 0 0" scale="1.5 1.5 1.5" obb-collider=""></a-gltf-model>
-            <a-gltf-model src="#tree1" shadow="" scale="0.25 0.5 0.25" position="25 0 8" obb-collider=""></a-gltf-model>
-            <a-gltf-model src="#tree1" shadow="" scale="0.25 0.5 0.25" position="22 0 9" obb-collider=""></a-gltf-model>
-            <a-gltf-model src="#tree1" shadow="" scale="0.25 0.5 0.25" position="29 0 6" obb-collider=""></a-gltf-model>
-            <a-gltf-model src="#tree1" shadow="" scale="0.25 0.5 0.25" position="28 0 7" obb-collider=""></a-gltf-model>
+            <a-gltf-model src="#tree1" scale="0.25 0.5 0.25" position="25 0 8" obb-collider=""></a-gltf-model>
+            <a-gltf-model src="#tree1" scale="0.25 0.5 0.25" position="22 0 9" obb-collider=""></a-gltf-model>
+            <a-gltf-model src="#tree1" scale="0.25 0.5 0.25" position="29 0 6" obb-collider=""></a-gltf-model>
+            <a-gltf-model src="#tree1" scale="0.25 0.5 0.25" position="28 0 7" obb-collider=""></a-gltf-model>
 
 
             <a-gltf-model src="#game-menu" shadow="" position="8 1 8"></a-gltf-model>
@@ -46,8 +47,9 @@
             <!-- Floating platform (jump target) -->
             <a-box position="0 3 -10" depth="2" height="0.3" width="2" color="#00CED1" shadow="" obb-collider=""></a-box>
 
-            <!-- Goal sphere -->
-            <a-sphere position="0 4 -10" radius="0.5" color="#FFD700" shadow="" obb-collider=""></a-sphere>
+            <!-- Goal sphere (Now coin) -->
+            <a-sphere position="0 4 -10" radius="0.5" color="#FFD700" obb-collider="" visible="false"></a-sphere>
+            <a-gltf-model position="0 4 -10" shadow="" scale="0.5 0.5 0.5" src="#coin" animation-mixer=""></a-gltf-model>
 
             <!-- Lighting -->
             <a-light type="ambient" color="#aaaaaa"></a-light>
