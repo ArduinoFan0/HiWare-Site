@@ -12,7 +12,7 @@ try:
     keys_pressed = []
     import random, json, time, hashlib, math
     from threading import Thread
-    from js import setTimeout
+    from js import setTimeout, CSS
     import js
     cookies = window.cookieStore
     import sys, traceback
@@ -63,7 +63,8 @@ try:
             ]
             return random.choice(secret_questions)
     s_q = secret_question_gen()
-
+    def generate_uid():
+        return hashlib.sha256(f"{time.time_ns()}{random.randint(-1234567890, 1234567890)}".encode(), usedforsecurity=False).hexdigest()
     secret_question:str = s_q.generate()
     interacted = False
     def schedule(start_delay: float, function):
@@ -522,11 +523,15 @@ try:
         @overload
         def __init__(self, position: list[float]) -> None:
             ...
+
         @overload
         def __init__(self, position: str, sep=' ') -> None:
             ...
-        def __init__(self, x, y:float|str=0, z:float=0) -> None:
+
+        def __init__(self, x, y:float|str=None, z:float=0) -> None:
             if isinstance(x, str):
+                if y is None:
+                    y = ' '
                 assert isinstance(y, str), TypeError("Parameter 'sep' must be str if constructing from string")
                 position = [int(x.split(y)[i]) for i in range(len(x.split(y)))]
                 self.x = position[0]
@@ -537,6 +542,8 @@ try:
                 self.y = x[1]
                 self.z = x[2]
             elif isinstance(x, float|int):
+                if y is None:
+                    y = 0
                 self.x = x
                 self.y = y
                 self.z = z
@@ -546,6 +553,8 @@ try:
             dz = other.z - self.z
             return math.sqrt(dx * dx + dy * dy + dz * dz)
 
+        def copy(self):
+            return Vector(self.x, self.y, self.z)
         def to_list(self) -> list[float]:
             return [self.x, self.y, self.z]
 
@@ -557,6 +566,15 @@ try:
             return f"{self.x}{sep}{self.y}{sep}{self.z}"
         def __repr__(self):
             return f"Vector({self.x}, {self.y}, {self.z})"
+
+        def __sub__(self, other):
+            return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
+
+        def __add__(self, other):
+            return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
+        def __mul__(self, other):
+            return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
+
     class VR():
         class GameMenu():
             def __init__(self):
@@ -587,9 +605,11 @@ try:
             def get_closest_object(self, group, cursor:Vector):
                 button_tmp = {'id':'None', 'distance':65535.0}
                 buttons = [button_tmp.copy()]
-                for button in group.getElementsByClassName('a-button'):
+                for button in group.children:
                     if button.hasAttribute('hidden'):
                         continue
+                    if not button.hasAttribute('id'):
+                        button.setAttribute('id', generate_uid())
                     button_tmp['id'] = str(button.getAttribute('id'))
                     position = js.THREE.Vector3.new()
                     button.object3D.getWorldPosition(position)
@@ -614,6 +634,7 @@ try:
             self.gravity = 9.8
             self.jump_height = 1
             self.gravity_mul = 1
+            self.selected_item = document.querySelector('a-scene').querySelector("#nothing")
             self.output_gravity = self.gravity * self.gravity_mul
             self.target_fps = 60
             self.ljx = 0
@@ -628,7 +649,7 @@ try:
             self.colliding_body_zp = False
             self.colliding_body_xn = False
             self.colliding_body_zn = False
-
+            self.selected_transformation = 'position'
             self.squishing_x = False
             self.squishing_z = False
             self.look_up_down = 0
@@ -636,9 +657,10 @@ try:
             self.in_vr = True
             self.debug_mode = False
             self.clicked = False
+            self.changed_selected_transformation = False
             self.holding_rt = False
             self.holding_lt = False
-
+            self.last_cursor_position = Vector(0, 0, 0)
             self.menu = self.GameMenu()
             self.game = self.Game()
             self.colliding_objects = {
@@ -697,15 +719,75 @@ try:
                         self.rotation += 90
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
-                if self.holding_rt and self.debug_mode:
-                    selected = scene.getElementById(self.game.get_closest_object(group=scene, cursor=anchor_position)['id'])
-                    if selected.hasAttribute('position'):
-                        selected.setAttribute('position', anchor_position.to_str())
+                if self.debug_mode:
+                    scene_level = my_scene.querySelector('#scene')
+                    my_id = self.game.get_closest_object(group=scene_level, cursor=anchor_position)['id']
+                    selected = self.selected_item
+                    assert selected is not None, TypeError(f'Object with id {my_id} seems to be None')
+                    if not selected.hasAttribute('material'):
+                        selected.setAttribute('material', '')
+                    selected.setAttribute('material', 'opacity: 0.5')
+                    selected.setAttribute('material', 'opacity: 1.0')
+
+                    if self.holding_lt or ('q' in keys_pressed):
+                        if not self.changed_selected_transformation:
+                            self.changed_selected_transformation = True
+                            match self.selected_transformation:
+                                case 'position':
+                                    self.selected_transformation = 'rotation'
+                                    gizmo.children[0].setAttribute('src', '#gizmo-r')
+                                case 'rotation':
+                                    self.selected_transformation = 'scale'
+                                    gizmo.children[0].setAttribute('src', '#gizmo-s')
+                                case 'scale':
+                                    self.selected_transformation = 'position'
+                                    gizmo.children[0].setAttribute('src', '#gizmo-p')
+
+                    else:
+                        self.changed_selected_transformation = False
+                    if self.holding_rt or ('e' in keys_pressed):
+                        #selected.object3D.position.set(0, 0, 0)
+                        selected_transformation = self.selected_transformation
+                        if not selected.hasAttribute(selected_transformation):
+                            _position = Vector(anchor_position.x, anchor_position.y, anchor_position.z)
+                            selected.setAttribute(selected_transformation, _position.to_str())
+                        else:
+                            try:
+                                relative_pos = list(selected.getAttribute(selected_transformation).to_py())
+                                relative_pos = Vector(relative_pos[0], relative_pos[1], relative_pos[2])
+                            except ValueError:
+                                relative_pos = list(selected.getAttribute(selected_transformation).to_py().values())
+                                relative_pos = Vector(relative_pos[0], relative_pos[1], relative_pos[2])
+                            delta_pos = anchor_position - self.last_cursor_position
+                            if selected_transformation == 'rotation':
+                                delta_pos *= Vector(360, 360, 360)
+                            new_pos = Vector(
+                                relative_pos.x +
+                                delta_pos.x,
+                                relative_pos.y +
+                                delta_pos.y,
+                                relative_pos.z +
+                                delta_pos.z
+                            )
+                            match selected_transformation:
+                                case 'position':
+                                    selected.object3D.position.set(new_pos.x, new_pos.y, new_pos.z)
+                                case 'rotation':
+                                    selected.setAttribute(selected_transformation, new_pos.to_str())
+                                case 'scale':
+                                    selected.setAttribute(selected_transformation, new_pos.to_str())
+
+                        #selected.setAttribute('visible', 'false')
+                        #selected.setAttribute('position', anchor_position.to_str())
+                    else:
+                        self.selected_item = scene_level.querySelector("#" + CSS.escape(my_id))
             for button in buttons:
                 try:
                     button['model'].setAttribute('position', "0 0 0")
                 except AttributeError:
                     pass
+            mi = gizmo.querySelector('.mode-indicator')
+            mi.setAttribute('true' if self.debug_mode else 'false')
             self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
@@ -725,6 +807,7 @@ try:
             y = math.sin(direction) * strength
             self.x_velocity = x / 10
             self.z_velocity = y / 10
+            self.last_cursor_position = anchor_position.copy()
     vr_player = VR()
 
     async def fetch_level_xml(path: str):
@@ -804,7 +887,7 @@ try:
     def vr_player_collide(event):
         if event.target.id == 'player-collider-feet':
             if not event.detail.withEl.hasAttribute('id'):
-                event.detail.withEl.id = hashlib.sha256(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
+                event.detail.withEl.id = generate_uid()
             if not event.detail.withEl.id in vr_player.colliding_objects['feet']:
 
                 vr_player.colliding_objects['feet'].append(event.detail.withEl.id)
@@ -869,7 +952,8 @@ try:
         await apply_settings(None)
         schedule(16, loop)
         try:
-            vr_player.update()
+            if document.querySelector('a-scene') is not None:
+                vr_player.update()
         except BaseException as e:
             print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
     await loop()
