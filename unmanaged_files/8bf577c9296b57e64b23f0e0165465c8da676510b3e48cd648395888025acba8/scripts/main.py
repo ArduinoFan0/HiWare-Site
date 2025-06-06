@@ -585,12 +585,12 @@ try:
             def __init__(self):
                 pass
             def get_closest_object(self, group, cursor:Vector):
-                button_tmp = {'button-id':'None', 'distance':65535.0}
+                button_tmp = {'id':'None', 'distance':65535.0}
                 buttons = [button_tmp.copy()]
                 for button in group.getElementsByClassName('a-button'):
                     if button.hasAttribute('hidden'):
                         continue
-                    button_tmp['button-id'] = str(button.getAttribute('id'))
+                    button_tmp['id'] = str(button.getAttribute('id'))
                     position = js.THREE.Vector3.new()
                     button.object3D.getWorldPosition(position)
                     position = list(position.to_py())
@@ -600,7 +600,7 @@ try:
                         buttons.insert(0, button_tmp.copy())
                     else:
                         buttons.append(button_tmp.copy())
-                buttons.remove({'button-id':'None', 'distance':65535.0})
+                buttons.remove({'id':'None', 'distance':65535.0})
                 return buttons[0]
         def __init__(self):
             self.x = 0
@@ -698,7 +698,7 @@ try:
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
                 if self.holding_rt and self.debug_mode:
-                    selected = game.get_closest_object(group=scene, cursor_pos=anchor_position)
+                    selected = scene.getElementById(self.game.get_closest_object(group=scene, cursor=anchor_position)['id'])
                     if selected.hasAttribute('position'):
                         selected.setAttribute('position', anchor_position.to_str())
             for button in buttons:
