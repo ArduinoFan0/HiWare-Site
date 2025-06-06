@@ -561,8 +561,9 @@ try:
         class GameMenu():
             def __init__(self):
                 self.menu_obj = document.querySelector('a-scene').querySelector('#rig').querySelector('#virtual-menu')
-            def closest_button(self, cursor:Vector, get_all:bool=False):
-                button_tmp = {'button-id':'None', 'distance':65535.0, 'model':None}
+
+            def closest_button(self, cursor: Vector, get_all: bool = False):
+                button_tmp = {'button-id': 'None', 'distance': 65535.0, 'model': None}
                 buttons = [button_tmp.copy()]
                 for button in self.menu_obj.getElementsByClassName('a-button'):
                     if button.hasAttribute('hidden'):
@@ -578,8 +579,29 @@ try:
                         buttons.insert(0, button_tmp.copy())
                     else:
                         buttons.append(button_tmp.copy())
-                buttons.remove({'button-id':'None', 'distance':65535.0, 'model':None})
+                buttons.remove({'button-id': 'None', 'distance': 65535.0, 'model': None})
                 return buttons[0] if not get_all else buttons
+        class Game():
+            def __init__(self):
+                pass
+            def get_closest_object(self, group, cursor:Vector):
+                button_tmp = {'button-id':'None', 'distance':65535.0}
+                buttons = [button_tmp.copy()]
+                for button in group.getElementsByClassName('a-button'):
+                    if button.hasAttribute('hidden'):
+                        continue
+                    button_tmp['button-id'] = str(button.getAttribute('id'))
+                    position = js.THREE.Vector3.new()
+                    button.object3D.getWorldPosition(position)
+                    position = list(position.to_py())
+                    button_pos = Vector(position)
+                    button_tmp['distance'] = button_pos.distance_to(cursor)
+                    if button_tmp['distance'] < buttons[0]['distance']:
+                        buttons.insert(0, button_tmp.copy())
+                    else:
+                        buttons.append(button_tmp.copy())
+                buttons.remove({'button-id':'None', 'distance':65535.0})
+                return buttons[0]
         def __init__(self):
             self.x = 0
             self.y = 10
@@ -614,7 +636,11 @@ try:
             self.in_vr = True
             self.debug_mode = False
             self.clicked = False
+            self.holding_rt = False
+            self.holding_lt = False
+
             self.menu = self.GameMenu()
+            self.game = self.Game()
             self.colliding_objects = {
                 'feet':[]
             }
@@ -671,6 +697,10 @@ try:
                         self.rotation += 90
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
+                if self.holding_rt and self.debug_mode:
+                    selected = game.get_closest_object(group=scene, cursor_pos=anchor_position)
+                    if selected.hasAttribute('position'):
+                        selected.setAttribute('position', anchor_position.to_str())
             for button in buttons:
                 try:
                     button['model'].setAttribute('position', "0 0 0")
@@ -715,6 +745,9 @@ try:
     scene.replaceWith(level_scene)
     async def trigger(event):
         vr_player.clicked = True
+        vr_player.holding_rt = True
+    async def untrigger(event):
+        vr_player.holding_rt = False
     async def vr_joystick(event):
         try:
             x = event.detail.x
