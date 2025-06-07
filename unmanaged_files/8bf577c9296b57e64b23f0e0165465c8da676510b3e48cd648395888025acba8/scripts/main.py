@@ -705,6 +705,8 @@ try:
             buttons = self.menu.closest_button(anchor_position, get_all=True)
             button_details = buttons.pop(0)
             touching_button = button_details['distance'] < 0.07
+            for object in scene_level.children:
+                object.setAttribute('material', 'opacity: 1.0')
             if touching_button:
                 button_details['model'].setAttribute('position', f"0.01 0 0")
                 if clicked:
@@ -727,7 +729,6 @@ try:
                     if not selected.hasAttribute('material'):
                         selected.setAttribute('material', '')
                     selected.setAttribute('material', 'opacity: 0.5')
-                    selected.setAttribute('material', 'opacity: 1.0')
 
                     if self.holding_lt or ('q' in keys_pressed):
                         if not self.changed_selected_transformation:
@@ -781,13 +782,15 @@ try:
                         #selected.setAttribute('position', anchor_position.to_str())
                     else:
                         self.selected_item = scene_level.querySelector("#" + CSS.escape(my_id))
+
+
             for button in buttons:
                 try:
                     button['model'].setAttribute('position', "0 0 0")
                 except AttributeError:
                     pass
             mi = gizmo.querySelector('.mode-indicator')
-            mi.setAttribute('true' if self.debug_mode else 'false')
+            mi.setAttribute('visible', 'true' if self.debug_mode else 'false')
             self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
@@ -826,11 +829,25 @@ try:
     level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
     assets.replaceWith(level_assets)
     scene.replaceWith(level_scene)
-    async def trigger(event):
+
+
+    async def vr_trigger(event):
         vr_player.clicked = True
         vr_player.holding_rt = True
-    async def untrigger(event):
+
+
+    async def vr_untrigger(event):
         vr_player.holding_rt = False
+
+
+    async def vr_ltrigger(event):
+        vr_player.holding_lt = True
+
+
+    async def vr_luntrigger(event):
+        vr_player.holding_lt = False
+
+
     async def vr_joystick(event):
         try:
             x = event.detail.x
