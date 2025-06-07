@@ -635,6 +635,13 @@ try:
             self.jump_height = 1
             self.gravity_mul = 1
             self.selected_item = document.querySelector('a-scene').querySelector("#nothing")
+            self.last_selected = document.querySelector('a-scene').querySelector("#nothing")
+            self.prev_selected = document.querySelector('a-scene').querySelector("#nothing")
+
+            self.last_selected_properties = {
+                'visible': bool
+            }
+            self.initial_selected_properties = self.last_selected_properties.copy()
             self.output_gravity = self.gravity * self.gravity_mul
             self.target_fps = 60
             self.ljx = 0
@@ -661,6 +668,7 @@ try:
             self.holding_rt = False
             self.holding_lt = False
             self.last_cursor_position = Vector(0, 0, 0)
+            self.current_cursor_pos = Vector(0, 0, 0)
             self.menu = self.GameMenu()
             self.game = self.Game()
             self.colliding_objects = {
@@ -705,6 +713,8 @@ try:
             buttons = self.menu.closest_button(anchor_position, get_all=True)
             button_details = buttons.pop(0)
             touching_button = button_details['distance'] < 0.07
+            scene_level = my_scene.querySelector('#scene')
+            self.current_cursor_pos = anchor_position
             for object in scene_level.children:
                 object.setAttribute('material', 'opacity: 1.0')
             if touching_button:
@@ -722,13 +732,17 @@ try:
             else:
                 button_details['model'].setAttribute('position', "0 0 0")
                 if self.debug_mode:
-                    scene_level = my_scene.querySelector('#scene')
                     my_id = self.game.get_closest_object(group=scene_level, cursor=anchor_position)['id']
                     selected = self.selected_item
                     assert selected is not None, TypeError(f'Object with id {my_id} seems to be None')
                     if not selected.hasAttribute('material'):
                         selected.setAttribute('material', '')
-                    selected.setAttribute('material', 'opacity: 0.5')
+                    #selected.setAttribute('material', f'opacity: {math.sin(time.time() * math.tau) / 4 + 0.75}; transparent: true')
+                    selected.setAttribute('visible',
+                                          math.sin(time.time() * math.tau * 4) > -0.35)
+
+                    self.last_selected.setAttribute('visible',
+                                          self.last_selected_properties['visible'])
 
                     if self.holding_lt or ('q' in keys_pressed):
                         if not self.changed_selected_transformation:
@@ -750,8 +764,7 @@ try:
                         #selected.object3D.position.set(0, 0, 0)
                         selected_transformation = self.selected_transformation
                         if not selected.hasAttribute(selected_transformation):
-                            _position = Vector(anchor_position.x, anchor_position.y, anchor_position.z)
-                            selected.setAttribute(selected_transformation, _position.to_str())
+                            selected.setAttribute(selected_transformation, '0 0 0' if selected_transformation != 'scale' else '1 1 1')
                         else:
                             try:
                                 relative_pos = list(selected.getAttribute(selected_transformation).to_py())
@@ -811,6 +824,11 @@ try:
             self.x_velocity = x / 10
             self.z_velocity = y / 10
             self.last_cursor_position = anchor_position.copy()
+            if not self.selected_item == self.prev_selected:
+                self.last_selected_properties = self.initial_selected_properties.copy()
+                self.initial_selected_properties['visible'] = self.selected_item.getAttribute('visible')
+                self.last_selected = self.prev_selected
+                self.prev_selected = self.selected_item
     vr_player = VR()
 
     async def fetch_level_xml(path: str):
@@ -847,6 +865,16 @@ try:
     async def vr_luntrigger(event):
         vr_player.holding_lt = False
 
+    async def vr_y_down(event):
+        if vr_player.debug_mode:
+            cube = document.createElement('a-box')
+            cube.setAttribute('width', 1.0)
+            cube.setAttribute('height', 1.0)
+            cube.setAttribute('depth', 1.0)
+            cube.setAttribute('position', vr_player.current_cursor_pos.to_str())
+            scene_level = document.querySelector('a-scene').querySelector('#scene')
+            scene_level.append(cube)
+
 
     async def vr_joystick(event):
         try:
@@ -862,6 +890,8 @@ try:
             if vr_player.debug_mode:
                 if 'o' in keys_pressed:
                     vr_player.rotation += 15
+            if 'n' in keys_pressed:
+                await vr_y_down(None)
             x = d-a
             y = s-w
         vr_player.ljx = x
