@@ -354,6 +354,9 @@
                             <a-asset-item id="gizmo-p" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-pos.glb"></a-asset-item>
                             <a-asset-item id="gizmo-r" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-rot.glb"></a-asset-item>
                             <a-asset-item id="gizmo-s" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-scl.glb"></a-asset-item>
+                            <a-asset-item id="gizmo-no-x" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-d-x.glb"></a-asset-item>
+                            <a-asset-item id="gizmo-no-y" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-d-y.glb"></a-asset-item>
+                            <a-asset-item id="gizmo-no-z" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/gizmo-d-z.glb"></a-asset-item>
 
                             <a-asset-item id="c-left" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/left-hand.glb"></a-asset-item>
                             <a-asset-item id="c-right" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/right-hand.glb"></a-asset-item>
@@ -399,6 +402,7 @@
                                     py-triggerdown="vr_ltrigger"
                                     py-triggerup="vr_luntrigger"
                                     py-ybuttondown="vr_y_down"
+                                    py-xbuttondown="vr_x_down"
                                 >
                                     <a-gltf-model class="hands" scale="0.9 0.9 0.9" src="#c-left" rotation="0 0 0">
 <                                   </a-gltf-model>
@@ -497,6 +501,10 @@
                         </a-entity>
                         <a-gltf-model class="a-debug" scale="0.5 0.5 0.5" src="#gizmo" rotation="0 0 0">
                             <a-gltf-model class="mode-indicator" src="#gizmo-p"></a-gltf-model>
+                            <a-gltf-model class="no-x" src="#gizmo-no-x"></a-gltf-model>
+                            <a-gltf-model class="no-y" src="#gizmo-no-y"></a-gltf-model>
+                            <a-gltf-model class="no-z" src="#gizmo-no-z"></a-gltf-model>
+
                         </a-gltf-model>
                         <a-entity id="nothing"></a-entity>
                         <row- style="position:fixed; top:100px; left:0%; width:100% ">

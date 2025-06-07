@@ -648,6 +648,10 @@ try:
             self.ljy = 0
             self.rjx = 0
             self.rjy = 0
+            self.transformation_disable_x = False
+            self.transformation_disable_y = False
+            self.transformation_disable_z = False
+
             self.collision_velocity = 0.001
             self.colliding_feet = False
             self.colliding_body_x = False
@@ -686,6 +690,8 @@ try:
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
+            gizmo_scale = self.rjy * 0.75 + 1.25
+            transformation_multiplier = self.rjy * 0.9 + 1
             self.y += self.y_velocity / self.target_fps
             self.y += self.colliding_feet * self.collision_velocity
             self.collision_velocity += 0.001
@@ -775,6 +781,12 @@ try:
                             delta_pos = anchor_position - self.last_cursor_position
                             if selected_transformation == 'rotation':
                                 delta_pos *= Vector(360, 360, 360)
+                            delta_pos *= Vector(transformation_multiplier, transformation_multiplier, transformation_multiplier)
+                            delta_pos *= Vector(
+                                not self.transformation_disable_x,
+                                not self.transformation_disable_y,
+                                not self.transformation_disable_z
+                            )
                             new_pos = Vector(
                                 relative_pos.x +
                                 delta_pos.x,
@@ -804,6 +816,13 @@ try:
                     pass
             mi = gizmo.querySelector('.mode-indicator')
             mi.setAttribute('visible', 'true' if self.debug_mode else 'false')
+            axis = gizmo.querySelector('.no-x')
+            axis.setAttribute('visible', self.transformation_disable_x)
+            axis = gizmo.querySelector('.no-y')
+            axis.setAttribute('visible', self.transformation_disable_y)
+            axis = gizmo.querySelector('.no-z')
+            axis.setAttribute('visible', self.transformation_disable_z)
+
             self.switch_debug_mode(self.debug_mode) #
             #rot = f"{rot['x']} {rot['y']} {rot['z']}"
             pos = f"{position[0]} {position[1]} {position[2]}"
@@ -813,6 +832,9 @@ try:
             #rot_strnums = str(rot).split(' ')
             #rot_nums = [str(-float(i) * 180 / math.pi) for i in rot_strnums]
             gizmo.setAttribute('position', pos)
+            gizmo.setAttribute('scale', f"{gizmo_scale} {gizmo_scale} {gizmo_scale}")
+
+
             x = self.ljx
             y = -self.ljy
             direction = math.atan2(y, x) * 180 / math.pi
@@ -874,8 +896,17 @@ try:
             cube.setAttribute('position', vr_player.current_cursor_pos.to_str())
             scene_level = document.querySelector('a-scene').querySelector('#scene')
             scene_level.append(cube)
-
-
+    async def vr_x_down(event):
+        if vr_player.debug_mode:
+            disabled_axes = 0
+            disabled_axes |= vr_player.transformation_disable_x
+            disabled_axes |= vr_player.transformation_disable_y << 1
+            disabled_axes |= vr_player.transformation_disable_z << 2
+            disabled_axes += 1
+            disabled_axes = disabled_axes % 8
+            vr_player.transformation_disable_x = bool((disabled_axes & 1) >> 0)
+            vr_player.transformation_disable_y = bool((disabled_axes & 2) >> 1)
+            vr_player.transformation_disable_z = bool((disabled_axes & 4) >> 2)
     async def vr_joystick(event):
         try:
             x = event.detail.x
@@ -892,6 +923,8 @@ try:
                     vr_player.rotation += 15
             if 'n' in keys_pressed:
                 await vr_y_down(None)
+            if 'x' in keys_pressed:
+                await vr_x_down(None)
             x = d-a
             y = s-w
         vr_player.ljx = x
@@ -909,6 +942,10 @@ try:
             y = w-s
         vr_player.look_up_down_v = y * 3
         vr_player.r_velocity = x * -3
+        vr_player.rjx = x
+        if event is not None:
+            y = event.detail.y
+        vr_player.rjy = y
     @when('keydown', '*')
     def vr_rise(event):
         try:
