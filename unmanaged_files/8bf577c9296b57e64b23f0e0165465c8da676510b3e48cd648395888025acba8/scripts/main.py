@@ -606,11 +606,11 @@ try:
                 button_tmp = {'id':'None', 'distance':65535.0}
                 buttons = [button_tmp.copy()]
                 for button in group.children:
-                    if button.hasAttribute('hidden'):
-                        continue
+                    if not button.object3D.visible:
+                        pass
                     if not button.hasAttribute('id'):
                         button.setAttribute('id', generate_uid())
-                    button_tmp['id'] = str(button.getAttribute('id'))
+                    button_tmp['id'] = str(button.id)
                     position = js.THREE.Vector3.new()
                     button.object3D.getWorldPosition(position)
                     position = list(position.to_py())
@@ -665,7 +665,7 @@ try:
             self.squishing_z = False
             self.look_up_down = 0
             self.look_up_down_v = 0
-            self.in_vr = True
+            self.in_vr = window.AFRAME.utils.device.isMobileVR ()
             self.debug_mode = False
             self.clicked = False
             self.changed_selected_transformation = False
@@ -675,9 +675,26 @@ try:
             self.current_cursor_pos = Vector(0, 0, 0)
             self.menu = self.GameMenu()
             self.game = self.Game()
+            self.my_scene = document.getElementsByTagName('a-scene')[0]
+            self.playfield = self.my_scene.querySelector('#scene')
+            self.rig = self.my_scene.querySelector("#rig")
+            self.rig_rotating = self.rig.querySelector('#rig-rotate')
+            self.rig_camera = self.rig.querySelector('#camera')
+            self.gizmo = self.my_scene.getElementsByClassName('a-debug')[0]
+            self.gizmo_mode_indic = self.gizmo.querySelector('.mode-indicator')
+            self.gizmo_no_x = self.gizmo.querySelector('.no-x')
+            self.gizmo_no_y = self.gizmo.querySelector('.no-y')
+            self.gizmo_no_z = self.gizmo.querySelector('.no-z')
+
             self.colliding_objects = {
                 'feet':[]
             }
+            self.timers =[
+                0.0
+            ]
+        def refresh_object_cache(self):
+            self.my_scene = document.getElementsByTagName('a-scene')[0]
+            self.playfield = self.my_scene.querySelector('#scene')
         def switch_debug_mode(self, active:bool):
             my_scene = document.getElementsByTagName('a-scene')[0]
             if active:
@@ -685,12 +702,18 @@ try:
             else:
                 my_scene.querySelector('.a-debug').setAttribute('src', '#dot-cursor')
         def update(self):
-            my_scene = document.getElementsByTagName('a-scene')[0]
-            rig = my_scene.querySelector("#rig")
+            if self.timers[0] < time.time():
+                self.timers[0] = time.time() + 2
+                self.refresh_object_cache()
+            my_scene = self.my_scene
+            rig = self.rig
+            gizmo = self.gizmo
+            scene_level = self.playfield
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
             gizmo_scale = self.rjy * 0.75 + 1.25
+            gizmo_scale /= 2
             transformation_multiplier = self.rjy * 0.9 + 1
             self.y += self.y_velocity / self.target_fps
             self.y += self.colliding_feet * self.collision_velocity
@@ -700,29 +723,26 @@ try:
             self.rotation += self.r_velocity
             self.look_up_down += self.look_up_down_v
             self.y_velocity -= self.output_gravity / self.target_fps
-            if False:#self.y < 0:
-                self.y = 0
-                self.y_velocity = 0
+
             rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
-            rig.querySelector('#rig-rotate').setAttribute("rotation", f"0 {self.rotation} 0")
-            rig.querySelector('#camera').setAttribute("rotation", f"{self.look_up_down} 0 0")
+            self.rig_rotating.setAttribute("rotation", f"0 {self.rotation} 0")
+            if not self.in_vr: self.rig_camera.setAttribute("rotation", f"{self.look_up_down} 0 0")
 
             anchor = my_scene.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
-            gizmo = my_scene.getElementsByClassName('a-debug')[0]
-            #position = list(anchor.object3D.position.to_py())
+
             position = js.THREE.Vector3.new()
             anchor.object3D.getWorldPosition(position)
             position = list(position.to_py())
             anchor_position = Vector(position)
+
+
+
             clicked = self.clicked
             self.clicked = False
             buttons = self.menu.closest_button(anchor_position, get_all=True)
             button_details = buttons.pop(0)
             touching_button = button_details['distance'] < 0.07
-            scene_level = my_scene.querySelector('#scene')
             self.current_cursor_pos = anchor_position
-            for object in scene_level.children:
-                object.setAttribute('material', 'opacity: 1.0')
             if touching_button:
                 button_details['model'].setAttribute('position', f"0.01 0 0")
                 if clicked:
@@ -744,11 +764,9 @@ try:
                     if not selected.hasAttribute('material'):
                         selected.setAttribute('material', '')
                     #selected.setAttribute('material', f'opacity: {math.sin(time.time() * math.tau) / 4 + 0.75}; transparent: true')
-                    selected.setAttribute('visible',
-                                          math.sin(time.time() * math.tau * 4) > -0.35)
+                    selected.object3D.visible = math.sin(time.time() * math.tau * 4) > -0.35
 
-                    self.last_selected.setAttribute('visible',
-                                          self.last_selected_properties['visible'])
+                    self.last_selected.object3D.visible = self.last_selected_properties['visible']
 
                     if self.holding_lt or ('q' in keys_pressed):
                         if not self.changed_selected_transformation:
@@ -814,24 +832,15 @@ try:
                     button['model'].setAttribute('position', "0 0 0")
                 except AttributeError:
                     pass
-            mi = gizmo.querySelector('.mode-indicator')
+            mi = self.gizmo_mode_indic
             mi.setAttribute('visible', 'true' if self.debug_mode else 'false')
-            axis = gizmo.querySelector('.no-x')
-            axis.setAttribute('visible', self.transformation_disable_x)
-            axis = gizmo.querySelector('.no-y')
-            axis.setAttribute('visible', self.transformation_disable_y)
-            axis = gizmo.querySelector('.no-z')
-            axis.setAttribute('visible', self.transformation_disable_z)
+            self.gizmo_no_x.object3D.visible = self.transformation_disable_x
+            self.gizmo_no_y.object3D.visible = self.transformation_disable_y
+            self.gizmo_no_z.object3D.visible = self.transformation_disable_z
 
             self.switch_debug_mode(self.debug_mode) #
-            #rot = f"{rot['x']} {rot['y']} {rot['z']}"
-            pos = f"{position[0]} {position[1]} {position[2]}"
 
-            if pos is None:
-                pos = '0 0 0'
-            #rot_strnums = str(rot).split(' ')
-            #rot_nums = [str(-float(i) * 180 / math.pi) for i in rot_strnums]
-            gizmo.setAttribute('position', pos)
+            gizmo.object3D.position.set(position[0], position[1], position[2])
             gizmo.setAttribute('scale', f"{gizmo_scale} {gizmo_scale} {gizmo_scale}")
 
 
@@ -848,7 +857,7 @@ try:
             self.last_cursor_position = anchor_position.copy()
             if not self.selected_item == self.prev_selected:
                 self.last_selected_properties = self.initial_selected_properties.copy()
-                self.initial_selected_properties['visible'] = self.selected_item.getAttribute('visible')
+                self.initial_selected_properties['visible'] = self.selected_item.object3D.visible
                 self.last_selected = self.prev_selected
                 self.prev_selected = self.selected_item
     vr_player = VR()
@@ -1030,16 +1039,16 @@ try:
 
     async def loop():
         try:
-            document.querySelector('#rapid-random').innerText = random.randint(1, 100)
+            pass#document.querySelector('#rapid-random').innerText = random.randint(1, 100)
         except AttributeError:
             pass
         await apply_settings(None)
-        schedule(16, loop)
         try:
             if document.querySelector('a-scene') is not None:
                 vr_player.update()
         except BaseException as e:
             print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
+        schedule(16, loop)
     await loop()
 except BaseException as e:
     def on_exception(my_e):
