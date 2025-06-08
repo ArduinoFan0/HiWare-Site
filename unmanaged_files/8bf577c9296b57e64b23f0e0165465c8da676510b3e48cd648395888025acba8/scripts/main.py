@@ -602,6 +602,24 @@ try:
         class Game():
             def __init__(self):
                 pass
+
+            async def load_level(self, level_path:str):
+                def parse_xml(xml_text: str):
+                    parser = window.DOMParser.new()
+                    xml_doc = parser.parseFromString(xml_text, "application/xml")
+                    return xml_doc
+
+                async def fetch_level_xml(path: str):
+                    response = await window.fetch(path)
+                    xml_text = await response.text()
+                    return xml_text
+                my_level = parse_xml(await fetch_level_xml(level_path))
+                assets = document.querySelector('#default-assets')
+                scene = document.querySelector('#scene')
+                level_assets = my_level.querySelector('body').getElementsByTagName('a-assets')[0]
+                level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
+                assets.replaceWith(level_assets)
+                scene.replaceWith(level_scene)
             def get_closest_object(self, group, cursor:Vector):
                 button_tmp = {'id':'None', 'distance':65535.0}
                 buttons = [button_tmp.copy()]
@@ -675,26 +693,28 @@ try:
             self.current_cursor_pos = Vector(0, 0, 0)
             self.menu = self.GameMenu()
             self.game = self.Game()
-            self.my_scene = document.getElementsByTagName('a-scene')[0]
-            self.playfield = self.my_scene.querySelector('#scene')
-            self.rig = self.my_scene.querySelector("#rig")
+            self.aframe = document.getElementsByTagName('a-scene')[0]
+            self.playfield = self.aframe.querySelector('#scene')
+            self.rig = self.aframe.querySelector("#rig")
             self.rig_rotating = self.rig.querySelector('#rig-rotate')
             self.rig_camera = self.rig.querySelector('#camera')
-            self.gizmo = self.my_scene.getElementsByClassName('a-debug')[0]
+            self.gizmo = self.aframe.getElementsByClassName('a-debug')[0]
             self.gizmo_mode_indic = self.gizmo.querySelector('.mode-indicator')
             self.gizmo_no_x = self.gizmo.querySelector('.no-x')
             self.gizmo_no_y = self.gizmo.querySelector('.no-y')
             self.gizmo_no_z = self.gizmo.querySelector('.no-z')
-
+            self.xz_velocity_smoothing = 0.75
+            self.walking_speed = 1
             self.colliding_objects = {
                 'feet':[]
             }
             self.timers =[
+                0.0,
                 0.0
             ]
         def refresh_object_cache(self):
-            self.my_scene = document.getElementsByTagName('a-scene')[0]
-            self.playfield = self.my_scene.querySelector('#scene')
+            self.aframe = document.getElementsByTagName('a-scene')[0]
+            self.playfield = self.aframe.querySelector('#scene')
         def switch_debug_mode(self, active:bool):
             my_scene = document.getElementsByTagName('a-scene')[0]
             if active:
@@ -705,7 +725,11 @@ try:
             if self.timers[0] < time.time():
                 self.timers[0] = time.time() + 2
                 self.refresh_object_cache()
-            my_scene = self.my_scene
+            if self.timers[1] < time.time():
+                self.timers[1] = time.time() + 0.1
+                self.aframe.renderer.shadowMap.needsUpdate = True
+
+            my_scene = self.aframe
             rig = self.rig
             gizmo = self.gizmo
             scene_level = self.playfield
@@ -724,9 +748,9 @@ try:
             self.look_up_down += self.look_up_down_v
             self.y_velocity -= self.output_gravity / self.target_fps
 
-            rig.setAttribute("position", f"{self.x} {self.y} {self.z}")
-            self.rig_rotating.setAttribute("rotation", f"0 {self.rotation} 0")
-            if not self.in_vr: self.rig_camera.setAttribute("rotation", f"{self.look_up_down} 0 0")
+            rig.object3D.position.set(self.x, self.y, self.z)
+            self.rig_rotating.object3D.rotation.set(0, math.radians(self.rotation), 0)
+            if not self.in_vr: self.rig_camera.object3D.rotation.set(math.radians(self.look_up_down), 0, 0)
 
             anchor = my_scene.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
 
@@ -744,7 +768,7 @@ try:
             touching_button = button_details['distance'] < 0.07
             self.current_cursor_pos = anchor_position
             if touching_button:
-                button_details['model'].setAttribute('position', f"0.01 0 0")
+                button_details['model'].object3D.position.set(0.01, 0, 0)
                 if clicked:
                     if button_details['button-id'] == 'button-debug':
                         self.debug_mode = not self.debug_mode
@@ -755,8 +779,10 @@ try:
                         self.y_velocity = 0
                     elif button_details['button-id'] == 'button-test':
                         self.rotation += 90
+                self.last_selected.object3D.visible = self.last_selected_properties['visible']
+                self.selected_item.object3D.visible = self.initial_selected_properties['visible']
             else:
-                button_details['model'].setAttribute('position', "0 0 0")
+                button_details['model'].object3D.position.set(0, 0, 0)
                 if self.debug_mode:
                     my_id = self.game.get_closest_object(group=scene_level, cursor=anchor_position)['id']
                     selected = self.selected_item
@@ -765,8 +791,8 @@ try:
                         selected.setAttribute('material', '')
                     #selected.setAttribute('material', f'opacity: {math.sin(time.time() * math.tau) / 4 + 0.75}; transparent: true')
                     selected.object3D.visible = math.sin(time.time() * math.tau * 4) > -0.35
-
                     self.last_selected.object3D.visible = self.last_selected_properties['visible']
+
 
                     if self.holding_lt or ('q' in keys_pressed):
                         if not self.changed_selected_transformation:
@@ -825,23 +851,25 @@ try:
                         #selected.setAttribute('position', anchor_position.to_str())
                     else:
                         self.selected_item = scene_level.querySelector("#" + CSS.escape(my_id))
-
+                else:
+                    self.last_selected.object3D.visible = self.last_selected_properties['visible']
+                    self.selected_item.object3D.visible = self.initial_selected_properties['visible']
 
             for button in buttons:
                 try:
-                    button['model'].setAttribute('position', "0 0 0")
+                    button['model'].object3D.position.set(0, 0, 0)
                 except AttributeError:
                     pass
             mi = self.gizmo_mode_indic
-            mi.setAttribute('visible', 'true' if self.debug_mode else 'false')
-            self.gizmo_no_x.object3D.visible = self.transformation_disable_x
-            self.gizmo_no_y.object3D.visible = self.transformation_disable_y
-            self.gizmo_no_z.object3D.visible = self.transformation_disable_z
+            mi.object3D.visible = self.debug_mode
+            self.gizmo_no_x.object3D.visible = self.transformation_disable_x and self.debug_mode
+            self.gizmo_no_y.object3D.visible = self.transformation_disable_y and self.debug_mode
+            self.gizmo_no_z.object3D.visible = self.transformation_disable_z and self.debug_mode
 
             self.switch_debug_mode(self.debug_mode) #
 
             gizmo.object3D.position.set(position[0], position[1], position[2])
-            gizmo.setAttribute('scale', f"{gizmo_scale} {gizmo_scale} {gizmo_scale}")
+            gizmo.object3D.scale.set(gizmo_scale, gizmo_scale, gizmo_scale)
 
 
             x = self.ljx
@@ -852,8 +880,10 @@ try:
             direction = direction * math.pi / 180
             x = math.cos(direction) * -strength
             y = math.sin(direction) * strength
-            self.x_velocity = x / 10
-            self.z_velocity = y / 10
+            self.x_velocity = (x / 10 * self.walking_speed) * (100 - self.xz_velocity_smoothing * 100) + self.x_velocity * self.xz_velocity_smoothing * 100
+            self.z_velocity = (y / 10 * self.walking_speed) * (100 - self.xz_velocity_smoothing * 100) + self.z_velocity * self.xz_velocity_smoothing * 100
+            self.x_velocity /= 100
+            self.z_velocity /= 100
             self.last_cursor_position = anchor_position.copy()
             if not self.selected_item == self.prev_selected:
                 self.last_selected_properties = self.initial_selected_properties.copy()
@@ -861,23 +891,8 @@ try:
                 self.last_selected = self.prev_selected
                 self.prev_selected = self.selected_item
     vr_player = VR()
+    await vr_player.game.load_level('./level2.xml')
 
-    async def fetch_level_xml(path: str):
-        response = await window.fetch(path)
-        xml_text = await response.text()
-        return xml_text
-
-    def parse_xml(xml_text: str):
-        parser = window.DOMParser.new()
-        xml_doc = parser.parseFromString(xml_text, "application/xml")
-        return xml_doc
-    my_level = parse_xml(await fetch_level_xml('./level2.xml'))
-    assets = document.querySelector('#default-assets')
-    scene = document.querySelector('#scene')
-    level_assets = my_level.querySelector('body').getElementsByTagName('a-assets')[0]
-    level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
-    assets.replaceWith(level_assets)
-    scene.replaceWith(level_scene)
 
 
     async def vr_trigger(event):

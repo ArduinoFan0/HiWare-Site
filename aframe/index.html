@@ -110,6 +110,12 @@
                     id="background-music6"
                     src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Synthetic%20Fields.mp3"
                     loop></audio>
+            <audio
+                    name="sci"
+                    class="background-music"
+                    id="background-music7"
+                    src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/audio/Sciformers.mp3"
+                    loop></audio>
 
 
         </div>
@@ -217,6 +223,8 @@
                         <span>
                             <label for="music-type">Music Type</label>
                             <select id="music-type">
+                                <option value="sci">Sciformers</option>
+
                                 <option value="bit18">BIT18 Ultimate</option>
                                 <option value="8Bit-Wonder">8Bit Wonder</option>
                                 <option value="COTR Part 1">COTR Part 1</option>
@@ -343,7 +351,10 @@
                     <div id="rapid-random">Not yet running!</div>
                 </div>
                 <div class="user-mode-element" style="height:calc(100% - 80px)">
-                    <a-scene>
+                    <a-scene
+                            shadow="type: pcfsoft; autoUpdate: false"
+                            renderer="foveationLevel: 0.5; sortTransparentObjects: true"
+                    >
                         <a-assets id="default-assets">
                             <img id="skybox-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/skybox-equirectangular.png"></img>
                             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
