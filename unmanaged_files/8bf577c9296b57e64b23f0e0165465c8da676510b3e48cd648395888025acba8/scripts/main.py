@@ -603,6 +603,13 @@ try:
                 raise self.VectorError("Supporting value of '*' operator must be int, float, or another Vector")
         def __round__(self, n=None):
             return Vector(round(self.x, n), round(self.y, n), round(self.z, n))
+
+        def __hex__(self):
+            return '#{0:02x}{1:02x}{2:02x}'.format(
+                max(0, min(255, round(self.x))),
+                max(0, min(255, round(self.y))),
+                max(0, min(255, round(self.z)))
+            )
     class VR():
         class GameMenu():
             def __init__(self):
@@ -677,6 +684,8 @@ try:
             self.x = 0
             self.y = 10
             self.z = 0
+            self.width = 0.5
+            self.height = 0.8
             self.y_velocity = 0
             self.z_velocity = 0
             self.x_velocity = 0
@@ -733,11 +742,14 @@ try:
             self.rig_camera = self.rig.querySelector('#camera')
             self.gizmo = self.aframe.getElementsByClassName('a-debug')[0]
             self.gizmo_mode_indic = self.gizmo.querySelector('.mode-indicator')
+            self.optimized_shadow_caster = self.playfield.querySelector('.optimized-shadow-caster')
+            self.shadow_camera_rotation = None
             self.gizmo_no_x = self.gizmo.querySelector('.no-x')
             self.gizmo_no_y = self.gizmo.querySelector('.no-y')
             self.gizmo_no_z = self.gizmo.querySelector('.no-z')
             self.xz_velocity_smoothing = 0.75
             self.walking_speed = 1
+            self.lgrip_pressed = False
             self.colliding_objects = {
                 'feet':[]
             }
@@ -749,6 +761,10 @@ try:
         def refresh_object_cache(self):
             self.aframe = document.getElementsByTagName('a-scene')[0]
             self.playfield = self.aframe.querySelector('#scene')
+            self.optimized_shadow_caster = self.playfield.querySelector('.optimized-shadow-caster')
+        def update_player_collider(self):
+            collider = self.rig.querySelector('#colliders')
+            collider.object3D.scale.set(self.width, self.height, self.width)
         def switch_debug_mode(self, active:bool):
             my_scene = document.getElementsByTagName('a-scene')[0]
             if active:
@@ -759,10 +775,22 @@ try:
             if self.timers[0] < time.time():
                 self.timers[0] = time.time() + 2
                 self.refresh_object_cache()
+                self.update_player_collider()
             if self.timers[1] < time.time():
                 self.timers[1] = time.time() + 0.1
                 self.aframe.renderer.shadowMap.needsUpdate = True
+                if self.optimized_shadow_caster is not None:
+                    light_obj = self.optimized_shadow_caster.object3D.children[
+                        0]  # children[0] is usually the actual THREE.DirectionalLight
 
+                    # Update the light's position (relative to player)
+                    self.optimized_shadow_caster.object3D.position.set(self.x / 2 - 20, self.y / 2 + 20, self.z / 2 + 20)
+
+                    # Set the light's target position (where it shines towards)
+                    light_obj.target.position.set(self.x / 2, self.y / 2, self.z / 2)
+
+                    # Make sure the target is in the scene graph
+                    self.aframe.object3D.add(light_obj.target)
             my_scene = self.aframe
             rig = self.rig
             gizmo = self.gizmo
@@ -860,6 +888,9 @@ try:
                                     self.selected_transformation = 'scale'
                                     gizmo.children[0].setAttribute('src', '#gizmo-s')
                                 case 'scale':
+                                    self.selected_transformation = 'color'
+                                    gizmo.children[0].setAttribute('src', '#gizmo-c')
+                                case 'color':
                                     self.selected_transformation = 'position'
                                     gizmo.children[0].setAttribute('src', '#gizmo-p')
 
@@ -877,9 +908,23 @@ try:
                             except ValueError:
                                 relative_pos = list(selected.getAttribute(selected_transformation).to_py().values())
                                 relative_pos = Vector(relative_pos[0], relative_pos[1], relative_pos[2])
+                            except AttributeError:
+                                if selected_transformation == 'color':
+                                    try:
+                                        colorstring = selected.getAttribute(selected_transformation)[1:]
+                                        r = int(colorstring[:2], 16)
+                                        g = int(colorstring[2:4], 16)
+                                        b = int(colorstring[4:6], 16)
+                                        relative_pos = Vector(r, g, b)
+                                    except ValueError:
+                                        relative_pos = Vector(255, 255, 255)
+                                else:
+                                    raise
                             delta_pos = anchor_position - self.last_cursor_position
                             if selected_transformation == 'rotation':
                                 delta_pos *= Vector(360, 360, 360)
+                            elif selected_transformation == 'color':
+                                delta_pos *= 255
                             delta_pos *= Vector(transformation_multiplier, transformation_multiplier, transformation_multiplier)
                             delta_pos *= Vector(
                                 not self.transformation_disable_x,
@@ -901,6 +946,8 @@ try:
                                     selected.setAttribute(selected_transformation, new_pos.to_str())
                                 case 'scale':
                                     selected.setAttribute(selected_transformation, new_pos.to_str())
+                                case 'color':
+                                    selected.setAttribute(selected_transformation, (new_pos).__hex__())
 
                         #selected.setAttribute('visible', 'false')
                         #selected.setAttribute('position', anchor_position.to_str())
@@ -977,19 +1024,23 @@ try:
             cube.setAttribute('height', 1.0)
             cube.setAttribute('depth', 1.0)
             cube.setAttribute('position', vr_player.current_cursor_pos.to_str())
+            cube.setAttribute('obb-collider', '')
             scene_level = document.querySelector('a-scene').querySelector('#scene')
             scene_level.append(cube)
     async def vr_x_down(event):
         if vr_player.debug_mode:
-            disabled_axes = 0
-            disabled_axes |= vr_player.transformation_disable_x
-            disabled_axes |= vr_player.transformation_disable_y << 1
-            disabled_axes |= vr_player.transformation_disable_z << 2
-            disabled_axes += 1
-            disabled_axes = disabled_axes % 8
-            vr_player.transformation_disable_x = bool((disabled_axes & 1) >> 0)
-            vr_player.transformation_disable_y = bool((disabled_axes & 2) >> 1)
-            vr_player.transformation_disable_z = bool((disabled_axes & 4) >> 2)
+            if not vr_player.lgrip_pressed:
+                disabled_axes = 0
+                disabled_axes |= vr_player.transformation_disable_x
+                disabled_axes |= vr_player.transformation_disable_y << 1
+                disabled_axes |= vr_player.transformation_disable_z << 2
+                disabled_axes += 1
+                disabled_axes = disabled_axes % 8
+                vr_player.transformation_disable_x = bool((disabled_axes & 1) >> 0)
+                vr_player.transformation_disable_y = bool((disabled_axes & 2) >> 1)
+                vr_player.transformation_disable_z = bool((disabled_axes & 4) >> 2)
+            else:
+                vr_player.selected_item.remove()
     async def vr_joystick(event):
         try:
             x = event.detail.x
@@ -1008,6 +1059,10 @@ try:
                 await vr_y_down(None)
             if 'x' in keys_pressed:
                 await vr_x_down(None)
+            if '1' in keys_pressed:
+                vr_player.lgrip_pressed = True
+            else:
+                vr_player.lgrip_pressed = False
             x = d-a
             y = s-w
         vr_player.ljx = x

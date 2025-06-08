@@ -3,7 +3,7 @@
     <head>
         <data class="json" id="player_data" value="
             {}
-        "></data>
+        "></data> <!-- Currently unused -->
     </head>
     <body>
         <a-assets>
@@ -50,19 +50,20 @@
             <a-gltf-model position="0 4 -10" shadow="" scale="0.5 0.5 0.5" src="#coin" animation-mixer=""></a-gltf-model>
 
             <!-- Lighting -->
-            <a-light type="ambient" color="#aaaaaa"></a-light>
-            <a-entity light="type: directional;
+            <a-light type="ambient" color="#888888"></a-light>
+            <a-entity class="optimized-shadow-caster" light="type: directional;
                     castShadow: true;
-                    intensity: 5.0;
-                    shadowCameraVisible: false;
-                    shadowCameraTop: 500;
-                    shadowCameraBottom: -500;
-                    shadowCameraLeft: -500;
-                    shadowCameraRight: 500;
-                    shadowMapHeight: 8192;
-                    shadowMapWidth: 8192;
+                    intensity: 2.0;
+                    shadowCameraVisible: true;
+                    shadowCameraTop: 100;
+                    shadowCameraBottom: -100;
+                    shadowCameraLeft: -100;
+                    shadowCameraRight: 100;
+                    shadowCameraFar: 100;
+                    shadowMapHeight: 2048;
+                    shadowMapWidth: 2048;
                     "
-            position="-100 100 100"></a-entity>
+            position="-20 20 20"></a-entity>
             <!-- Axis Spheres (XYZ markers) -->
             <a-entity id="xyz-balls">
                 <a-sphere position="9 0 0"  radius="1" color="#FF0000" obb-collider=""></a-sphere>
