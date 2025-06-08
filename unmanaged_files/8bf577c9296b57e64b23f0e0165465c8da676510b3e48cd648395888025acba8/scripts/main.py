@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import os
+from math import radians
 from typing import overload
 from pyscript import document, window, when, workers, ffi, PyWorker
 from pyscript.ffi import create_proxy
@@ -529,6 +530,7 @@ try:
             ...
 
         def __init__(self, x, y:float|str=None, z:float=0) -> None:
+            self.VectorError = Exception
             if isinstance(x, str):
                 if y is None:
                     y = ' '
@@ -552,7 +554,20 @@ try:
             dy = other.y - self.y
             dz = other.z - self.z
             return math.sqrt(dx * dx + dy * dy + dz * dz)
-
+        def direction_to(self, other: "Vector") -> float:
+            '''Note: This returns degrees
+            Note: This is a 2D function. For the 3D function, see "direction_to_3D"'''
+            return math.degrees(math.atan2(other.y - self.y, other.x - self.x))
+        def direction_to_3D(self, other: "Vector"):
+            my_xz = Vector(self.z, self.x)
+            their_xz = Vector(other.z, other.x)
+            yaw = my_xz.direction_to(their_xz) + 180
+            hdist = self.x * math.sin(math.radians(yaw)) + self.z * math.cos(math.radians(yaw))
+            my_wy = Vector(hdist, self.y)
+            hdist = other.x * math.sin(math.radians(yaw)) + other.z * math.cos(math.radians(yaw))
+            their_zy = Vector(hdist, other.y)
+            pitch = my_wy.direction_to(their_zy)
+            return Vector(pitch, yaw, 0)
         def copy(self):
             return Vector(self.x, self.y, self.z)
         def to_list(self) -> list[float]:
@@ -567,14 +582,27 @@ try:
         def __repr__(self):
             return f"Vector({self.x}, {self.y}, {self.z})"
 
-        def __sub__(self, other):
+        def __sub__(self, other: "Vector"):
             return Vector(self.x - other.x, self.y - other.y, self.z - other.z)
 
-        def __add__(self, other):
+        def __add__(self, other: "Vector"):
             return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
         def __mul__(self, other):
-            return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
-
+            if isinstance(other, Vector):
+                return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
+            elif isinstance(other, float|int):
+                return Vector(self.x * other, self.y * other, self.z * other)
+            else:
+                raise self.VectorError("Supporting value of '*' operator must be int, float, or another Vector")
+        def __truediv__(self, other):
+            if isinstance(other, Vector):
+                return Vector(self.x / other.x, self.y / other.y, self.z / other.z)
+            elif isinstance(other, float | int):
+                return Vector(self.x / other, self.y / other, self.z / other)
+            else:
+                raise self.VectorError("Supporting value of '*' operator must be int, float, or another Vector")
+        def __round__(self, n=None):
+            return Vector(round(self.x, n), round(self.y, n), round(self.z, n))
     class VR():
         class GameMenu():
             def __init__(self):
@@ -640,6 +668,11 @@ try:
                         buttons.append(button_tmp.copy())
                 buttons.remove({'id':'None', 'distance':65535.0})
                 return buttons[0]
+            def world_pos(self, element):
+                position = js.THREE.Vector3.new()
+                element.object3D.getWorldPosition(position)
+                position = list(position.to_py())
+                return Vector(position)
         def __init__(self):
             self.x = 0
             self.y = 10
@@ -712,6 +745,7 @@ try:
                 0.0,
                 0.0
             ]
+            self.update_external = lambda: None
         def refresh_object_cache(self):
             self.aframe = document.getElementsByTagName('a-scene')[0]
             self.playfield = self.aframe.querySelector('#scene')
@@ -752,13 +786,34 @@ try:
             self.rig_rotating.object3D.rotation.set(0, math.radians(self.rotation), 0)
             if not self.in_vr: self.rig_camera.object3D.rotation.set(math.radians(self.look_up_down), 0, 0)
 
+
+
+            debug_text = self.gizmo.querySelector('.text')
+            #debug_text = self.playfield.querySelector('#xyz-balls')
+            player_position = self.game.world_pos(rig.querySelector('#camera'))
+            text_position = self.game.world_pos(debug_text)
+            new_rotation = text_position.direction_to_3D(player_position)
+            debug_text.object3D.rotation.set(-math.radians(new_rotation.x), math.radians(new_rotation.y), math.pi)
+            debug_text.object3D.scale.set(1 / gizmo_scale, 1 / gizmo_scale, 1 / gizmo_scale)
+            debug_text.object3D.position.set(*((player_position - text_position) / 2.7))
+            debug_text_string = ""
+
+
+
+
+
             anchor = my_scene.querySelector('#gizmo-anchor' if self.in_vr else '#gizmo-anchor-head')
 
             position = js.THREE.Vector3.new()
             anchor.object3D.getWorldPosition(position)
             position = list(position.to_py())
             anchor_position = Vector(position)
+            if self.debug_mode:
+                debug_text_string += f'Feet position: {round(Vector(self.x, self.y, self.z), 2).to_str()}\n'
+                debug_text_string += f'Head position: {round(player_position, 2).to_str()}\n'
+                debug_text_string += f'Cursor position: {round(anchor_position, 2).to_str()}\n'
 
+            debug_text.setAttribute('value', debug_text_string)
 
 
             clicked = self.clicked
@@ -890,7 +945,11 @@ try:
                 self.initial_selected_properties['visible'] = self.selected_item.object3D.visible
                 self.last_selected = self.prev_selected
                 self.prev_selected = self.selected_item
+            self.update_external(self)
     vr_player = VR()
+    def extern_update(self):
+        pass
+    vr_player.update_external = extern_update
     await vr_player.game.load_level('./level2.xml')
 
 
