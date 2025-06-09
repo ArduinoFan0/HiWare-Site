@@ -13,7 +13,7 @@ try:
     keys_pressed = []
     import random, json, time, hashlib, math
     from threading import Thread
-    from js import setTimeout, CSS
+    from js import setTimeout, CSS, setInterval
     import js
     cookies = window.cookieStore
     import sys, traceback
@@ -79,12 +79,6 @@ try:
 
         wrapped_proxy = create_proxy(wrapped)
         setTimeout(wrapped_proxy, start_delay)
-    def my_loop():
-        #do something
-        #then, run "schedule(77, my_loop)" at the very end of my_loop
-        pass
-        schedule(77, my_loop)
-    my_loop()
     def custom_excepthook(exc_type, exc_value, exc_tb):
         # Format the traceback
         tb_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_tb))
@@ -635,9 +629,13 @@ try:
                 buttons.remove({'button-id': 'None', 'distance': 65535.0, 'model': None})
                 return buttons[0] if not get_all else buttons
         class Game():
+            class data:
+                x = 0
+                y = 0
+                z = 0
+
             def __init__(self):
                 pass
-
             async def load_level(self, level_path:str):
                 def parse_xml(xml_text: str):
                     parser = window.DOMParser.new()
@@ -649,10 +647,16 @@ try:
                     xml_text = await response.text()
                     return xml_text
                 my_level = parse_xml(await fetch_level_xml(level_path))
-                assets = document.querySelector('#default-assets')
+                assets = document.querySelector('#assets')
                 scene = document.querySelector('#scene')
                 level_assets = my_level.querySelector('body').getElementsByTagName('a-assets')[0]
                 level_scene = my_level.querySelector('body').getElementsByTagName('a-entity')[0]
+                player_data = my_level.querySelector('head').querySelector('#player-data').getAttribute('value')
+                jdata = json.loads(player_data)
+                self.data.x = jdata['x']
+                self.data.y = jdata['y']
+                self.data.z = jdata['z']
+
                 assets.replaceWith(level_assets)
                 scene.replaceWith(level_scene)
             def get_closest_object(self, group, cursor:Vector):
@@ -680,12 +684,20 @@ try:
                 element.object3D.getWorldPosition(position)
                 position = list(position.to_py())
                 return Vector(position)
+
         def __init__(self):
             self.x = 0
             self.y = 10
             self.z = 0
-            self.width = 0.5
-            self.height = 0.8
+            self.width = 1
+            self.height = 1
+
+            self.fatness = 0.7
+            self.head_height = 0.4
+            self.step_width = 0.5
+            self.step_height = 0.4
+            self.tallness = 1.5
+
             self.y_velocity = 0
             self.z_velocity = 0
             self.x_velocity = 0
@@ -711,7 +723,7 @@ try:
             self.transformation_disable_x = False
             self.transformation_disable_y = False
             self.transformation_disable_z = False
-
+            self.level_counter = 0
             self.collision_velocity = 0.001
             self.colliding_feet = False
             self.colliding_body_x = False
@@ -725,7 +737,8 @@ try:
             self.squishing_z = False
             self.look_up_down = 0
             self.look_up_down_v = 0
-            self.in_vr = window.AFRAME.utils.device.isMobileVR ()
+            self.in_vr = window.AFRAME.utils.device.isMobileVR()
+            self.is_vr = window.AFRAME.utils.device.isMobileVR()
             self.debug_mode = False
             self.clicked = False
             self.changed_selected_transformation = False
@@ -750,14 +763,61 @@ try:
             self.xz_velocity_smoothing = 0.75
             self.walking_speed = 1
             self.lgrip_pressed = False
+            self.help_text_enabled = True
             self.colliding_objects = {
-                'feet':[]
+                'feet':[],
+                'toes':[]
             }
             self.timers =[
                 0.0,
                 0.0
             ]
             self.update_external = lambda: None
+            self.script_ids = []
+            self.colliding_toes = False
+            self.loading = False
+
+
+            self.load_scripts()
+
+        def load_scripts(self):
+            scripts = document.querySelectorAll('script')
+            for script in scripts:
+                if not script.type == 'custom-python':
+                    continue
+                exec(script.innerText, globals())
+                self.script_ids.append(script.id)
+                globals()[self.script_ids[-1]] = Module()
+        def run_scripts(self):
+            for script_id in self.script_ids:
+                try:
+                    globals()[script_id].__main__()
+                except:
+                    self.script_ids.remove(script_id)
+                    raise
+        async def load_level(self, level_path:str):
+            #js.THREE.Cache.clear()
+            successful=False
+            try:
+                await self.game.load_level(level_path)
+                self.pull_from_class_game()
+                successful=True
+            except:
+                try:
+                    self.level_counter = -1
+                    await self.game.load_level('./credits.xml')
+                    self.pull_from_class_game()
+                except:
+                    await self.game.load_level('./title-screen.xml')
+                    self.pull_from_class_game()
+            self.y_velocity = 0
+            self.rotation = 0
+            self.load_scripts()
+            return successful
+        def pull_from_class_game(self):
+            for name in dir(self.game.data):
+                if not name.startswith('_') and not callable(getattr(self.game.data, name)):
+                    setattr(self, name, getattr(self.game.data, name))
         def refresh_object_cache(self):
             self.aframe = document.getElementsByTagName('a-scene')[0]
             self.playfield = self.aframe.querySelector('#scene')
@@ -771,15 +831,63 @@ try:
                 my_scene.querySelector('.a-debug').setAttribute('src', '#gizmo')
             else:
                 my_scene.querySelector('.a-debug').setAttribute('src', '#dot-cursor')
-        def update(self):
+        def scale(self):
+            feet = self.rig.querySelector('#player-collider-feet')
+            toes = self.rig.querySelector('#player-collider-toes')
+            toes_graphic = self.rig.querySelector('#toes-graphic')
+
+            north = self.rig.querySelector('#player-collider-body-zn')
+            south = self.rig.querySelector('#player-collider-body-zp')
+            east = self.rig.querySelector('#player-collider-body-xp')
+            west = self.rig.querySelector('#player-collider-body-xn')
+            head = self.rig.querySelector('#player-collider-head')
+
+            step_height = self.step_height
+            step_width = self.step_width
+            fatness = self.fatness
+            tallness = self.tallness
+            head_height = self.head_height
+            feet_pos = Vector(0, step_height / 2, 0)
+            feet_scale = Vector(step_width, step_height, step_width)
+            toes_graphic_scale = Vector(step_width, step_width, 1)
+            toes_pos = Vector(0, 0, 0)
+            toes_scale = Vector(step_width, 0.05, step_width)
+            n_pos = Vector(0, step_height + tallness / 2, fatness / -2)
+            s_pos = Vector(0, step_height + tallness / 2, fatness / 2)
+            e_pos = Vector(fatness / 2, step_height + tallness / 2, 0)
+            w_pos = Vector(fatness / -2, step_height + tallness / 2, 0)
+            ns_scale = Vector(fatness - 0.021, tallness, 0.01)
+            ew_scale = Vector(0.01, tallness, fatness - 0.021)
+            head_pos = Vector(0, step_height + tallness, 0)
+            head_scale = Vector(step_width, head_height, step_width)
+            feet.object3D.position.set(*feet_pos)
+            toes.object3D.position.set(*toes_pos)
+            north.object3D.position.set(*n_pos)
+            south.object3D.position.set(*s_pos)
+            east.object3D.position.set(*e_pos)
+            west.object3D.position.set(*w_pos)
+            head.object3D.position.set(*head_pos)
+
+            feet.object3D.scale.set(*feet_scale)
+            toes.object3D.scale.set(*toes_scale)
+            north.object3D.scale.set(*ns_scale)
+            south.object3D.scale.set(*ns_scale)
+            east.object3D.scale.set(*ew_scale)
+            west.object3D.scale.set(*ew_scale)
+            head.object3D.scale.set(*head_scale)
+
+            toes_graphic.object3D.scale.set(*toes_graphic_scale)
+
+        async def update(self):
             if self.timers[0] < time.time():
                 self.timers[0] = time.time() + 2
                 self.refresh_object_cache()
                 self.update_player_collider()
             if self.timers[1] < time.time():
+                self.scale()
                 self.timers[1] = time.time() + 0.1
                 self.aframe.renderer.shadowMap.needsUpdate = True
-                if self.optimized_shadow_caster is not None:
+                if self.optimized_shadow_caster is not None and hasattr(self.optimized_shadow_caster, 'object3D'):
                     light_obj = self.optimized_shadow_caster.object3D.children[
                         0]  # children[0] is usually the actual THREE.DirectionalLight
 
@@ -826,7 +934,38 @@ try:
             debug_text.object3D.position.set(*((player_position - text_position) / 2.7))
             debug_text_string = ""
 
-
+            if self.help_text_enabled:
+                if self.is_vr:
+                    help_text = [
+                        'Left Stick: Move around',
+                        'Right Stick: Look',
+                        'RT: Action',
+                        'LB: Modifier',
+                        'LT: Change tool',
+                        'A: Jump',
+                        '--DEBUG MODE CONTROLS--',
+                        'Y: New Cube',
+                        'X: Disable some axes',
+                        'LB+X: Delete object',
+                        'Press A to hide'
+                    ]
+                else:
+                    help_text = [
+                        'WASD: Move around',
+                        'Arrow keys: Look',
+                        'E: Action',
+                        '1: Modifier',
+                        'Q: Change tool',
+                        'SPACE: Jump',
+                        '--DEBUG MODE CONTROLS--',
+                        'N: New Cube',
+                        'X: Disable some axes',
+                        '1+X: Delete object',
+                        'Press SPACE to hide'
+                    ]
+                debug_text_string += '\n'.join(help_text)
+                if self.y_velocity > 1:
+                    self.help_text_enabled = False
 
 
 
@@ -992,13 +1131,26 @@ try:
                 self.initial_selected_properties['visible'] = self.selected_item.object3D.visible
                 self.last_selected = self.prev_selected
                 self.prev_selected = self.selected_item
+            closest_obj_to_feet = self.game.get_closest_object(group=scene_level, cursor=Vector(self.x, self.y, self.z))
+            distance_to_goal = closest_obj_to_feet['distance'] if closest_obj_to_feet['id'] == 'level-goal' else 65535
+            if distance_to_goal < 1 and not self.loading:
+                self.loading = True
+                print(f'Loading level {self.level_counter}...')
+                successful_load = await self.load_level(f'./regular-levels/level{self.level_counter}.xml')
+                if successful_load:
+                    print(f'Level {self.level_counter} loaded.')
+                    self.level_counter += 1
+                else:
+                    print(f'Level {self.level_counter} not loaded.')
+                    self.level_counter = 0
+                self.loading = False
             self.update_external(self)
+            self.run_scripts()
     vr_player = VR()
     def extern_update(self):
         pass
     vr_player.update_external = extern_update
-    await vr_player.game.load_level('./level2.xml')
-
+    await vr_player.load_level('./title-screen.xml')
 
 
     async def vr_trigger(event):
@@ -1086,6 +1238,8 @@ try:
         vr_player.rjy = y
     @when('keydown', '*')
     def vr_rise(event):
+        if not vr_player.colliding_toes:
+            return
         try:
             if event.key == ' ':
                 vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
@@ -1110,12 +1264,24 @@ try:
         if event.target.id == 'player-collider-feet':
             if not event.detail.withEl.hasAttribute('id'):
                 event.detail.withEl.id = generate_uid()
+            if event.detail.withEl.id == 'player-collider-toes':
+                return
             if not event.detail.withEl.id in vr_player.colliding_objects['feet']:
 
                 vr_player.colliding_objects['feet'].append(event.detail.withEl.id)
                 if len(vr_player.colliding_objects['feet']) != 0:
                     vr_player.colliding_feet = True
                     vr_player.collision_velocity = 0.0001
+        elif event.target.id == 'player-collider-toes':
+            if not event.detail.withEl.hasAttribute('id'):
+                event.detail.withEl.id = generate_uid()
+            if event.detail.withEl.id == 'player-collider-feet':
+                return
+            if not event.detail.withEl.id in vr_player.colliding_objects['toes']:
+
+                vr_player.colliding_objects['toes'].append(event.detail.withEl.id)
+                if len(vr_player.colliding_objects['toes']) != 0:
+                    vr_player.colliding_toes = True
         else:
             match event.target.id:
                 case 'player-collider-body-xp' | 'player-collider-body-xn':
@@ -1141,10 +1307,20 @@ try:
     def vr_player_uncollide(event):
         if event.target.id == 'player-collider-feet':
             if not event.detail.withEl.hasAttribute('id'):
-                event.detail.withEl.id = hashlib.sha256(str(time.time_ns()).encode(), usedforsecurity=False).hexdigest()
+                event.detail.withEl.id = generate_uid()
+            if event.detail.withEl.id == 'player-collider-toes':
+                return
             if event.detail.withEl.id in vr_player.colliding_objects['feet']:
                 vr_player.colliding_objects['feet'].remove(event.detail.withEl.id)
                 if len(vr_player.colliding_objects['feet']) == 0: vr_player.colliding_feet = False
+        elif event.target.id == 'player-collider-toes':
+            if not event.detail.withEl.hasAttribute('id'):
+                event.detail.withEl.id = generate_uid()
+            if event.detail.withEl.id == 'player-collider-feet':
+                return
+            if event.detail.withEl.id in vr_player.colliding_objects['toes']:
+                vr_player.colliding_objects['toes'].remove(event.detail.withEl.id)
+                if len(vr_player.colliding_objects['toes']) == 0: vr_player.colliding_toes = False
 
         else:
             match event.target.id:
@@ -1174,11 +1350,11 @@ try:
         await apply_settings(None)
         try:
             if document.querySelector('a-scene') is not None:
-                vr_player.update()
+                await vr_player.update()
         except BaseException as e:
             print(f"{e.__traceback__.tb_next.tb_lineno} {type(e).__name__} {e}")
-        schedule(16, loop)
-    await loop()
+    interval_func = ffi.create_proxy(loop)
+    setInterval(interval_func, 16)
 except BaseException as e:
     def on_exception(my_e):
         raise my_e

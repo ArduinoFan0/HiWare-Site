@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <data class="json" id="player-data" value='
+            {
+                "x":0,
+                "y":0,
+                "z":2
+            }
+        '></data>
+    </head>
+    <body>
+        <a-assets id="assets">
+            <img id="skybox-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/gray.png"></img>
+            <a-asset-item id="coin" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/coin.glb"></a-asset-item>
+            <a-asset-item id="logo" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/logo.glb"></a-asset-item>
+
+            <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
+        </a-assets>
+        <a-entity id="scene">
+
+            <a-gltf-model id="game-logo" src="#logo" shadow="" position="0 -10 -20" scale="9 9 9" animation-mixer="">
+                <script type="custom-python">
+class Module:
+    def __init__(self):
+        self.hello = 'world'
+    def __main__(self):
+        logo = vr_player.playfield.querySelector('#game-logo')
+        if logo is None:
+            return
+        logo.object3D.rotation.set(0, 0, math.sin(time.time() * math.tau * 1) * math.radians(4))
+                </script>
+            </a-gltf-model>
+
+            <a-plane color="#404040" height="100" width="100" rotation="-90 0 0" position="0 0 0" shadow="" obb-collider="" visible="false"></a-plane>
+
+            <!-- Lighting -->
+            <a-light type="ambient" color="#ffffff"></a-light>
+            <!-- Axis Spheres (XYZ markers) -->
+            <a-entity position="0 1.5 2" id="level-goal">
+
+            </a-entity>
+            <a-sky id="background" src="#skybox-img"></a-sky>
+
+        </a-entity>
+
+    </body>
+</html>

@@ -354,8 +354,9 @@
                     <a-scene
                             shadow="type: pcfsoft; autoUpdate: false"
                             renderer="foveationLevel: 0.5; sortTransparentObjects: true"
+                            obb-collider="showColliders: false"
                     >
-                        <a-assets id="default-assets">
+                        <a-assets id="assets">
                             <img id="skybox-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/skybox-equirectangular.png"></img>
                             <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
                             <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
@@ -378,6 +379,7 @@
                             <a-asset-item id="game-menu-test-button" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/test-button.glb"></a-asset-item>
 
                             <a-asset-item id="dot-cursor" scale="0.5 0.5 0.5" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/dot-cursor.glb"></a-asset-item>
+                            <img id="toes-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/feet.png"></img>
 
                         </a-assets>
                         <a-entity id="scene">
@@ -403,7 +405,6 @@
 
 
 
-                        <a-sky id="background" src="#skybox-img"></a-sky>
 
                         <a-entity id="rig" position="25 10 0" shadow="">
                             <a-entity id="rig-rotate">
@@ -463,6 +464,7 @@
                                     <a-entity position="0 0 -1" id="gizmo-anchor-head"></a-entity>
 
                                 </a-entity>
+                                <a-plane id="toes-graphic" src="#toes-img" position="0 0.008 0" height="1" width="1" rotation="-90 0 0" repeat="1 1" material="transparent: true"></a-plane>
                             </a-entity>
                             <a-entity id="colliders">
                                 <a-box
@@ -474,6 +476,26 @@
                                     py-obbcollisionstarted="vr_player_collide"
                                     py-obbcollisionended="vr_player_uncollide"
                                 ></a-box>
+                                <a-box
+                                    id="player-collider-toes"
+                                    position="0 0.13 0"
+                                    scale="0.3 0.26 0.3"
+                                    visible="false"
+                                    obb-collider
+                                    py-obbcollisionstarted="vr_player_collide"
+                                    py-obbcollisionended="vr_player_uncollide"
+                                ></a-box>
+
+                                <a-box
+                                    id="player-collider-head"
+                                    position="0 2 0"
+                                    scale="0.3 0.26 0.3"
+                                    visible="false"
+                                    obb-collider
+                                    py-obbcollisionstarted="vr_player_collide"
+                                    py-obbcollisionended="vr_player_uncollide"
+                                ></a-box>
+
                                 <a-box
                                         id="player-collider-body-xp"
                                         position="0.51 1.061 0"

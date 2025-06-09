@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <data class="json" id="player-data" value='
+            {
+                "x":0,
+                "y":0,
+                "z":-2
+            }
+        '></data>
+    </head>
+    <body>
+        <a-assets id="assets">
+            <img id="skybox-img1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/skybox-equirectangular.jpg"></img>
+            <a-asset-item id="skybox" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/skybox.glb"></a-asset-item>
+            <a-asset-item id="rock1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/rock1.glb"></a-asset-item>
+            <a-asset-item id="tree1" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/tree-test.glb"></a-asset-item>
+            <a-asset-item id="coin" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/coin.glb"></a-asset-item>
+
+            <img id="ground" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/textures/grass.png"></img>
+        </a-assets>
+        <a-entity id="scene">
+
+            <a-plane src="#ground" height="1000" width="1000" rotation="-90 0 0" repeat="100 100" shadow="" obb-collider=""></a-plane>
+
+            <!-- Central platform -->
+            <a-cylinder position="0 0.1 -5" radius="5" height="0.2" color="#444444" shadow="" obb-collider=""></a-cylinder>
+
+            <!-- Jump pads (bouncy blocks) -->
+            <a-box position="-3 0.5 -5" color="#FF69B4" depth="1" height="0.2" width="1" shadow="" obb-collider=""></a-box>
+            <a-box position="3 0.5 -5" color="#FF69B4" depth="1" height="0.2" width="1" shadow="" obb-collider=""></a-box>
+
+            <!-- Pillars around the arena -->
+            <a-cylinder position="-5 1 -5" radius="0.2" height="2" color="#666666" shadow="" obb-collider=""></a-cylinder>
+            <a-cylinder position="5 1 -5"  radius="0.2" height="2" color="#666666" shadow="" obb-collider=""></a-cylinder>
+            <a-cylinder position="-5 1 -10" radius="0.2" height="2" color="#666666" shadow="" obb-collider=""></a-cylinder>
+            <a-cylinder position="5 1 -10"  radius="0.2" height="2" color="#666666" shadow="" obb-collider=""></a-cylinder>
+
+            <!-- Floating platform (jump target) -->
+            <a-box position="0 3 -10" depth="2" height="0.3" width="2" color="#00CED1" shadow="" obb-collider=""></a-box>
+
+            <!-- Goal sphere (Now coin) -->
+            <a-gltf-model position="0 4 -10" shadow="" scale="0.5 0.5 0.5" src="#coin" animation-mixer="" id="level-goal"></a-gltf-model>
+
+            <!-- Lighting -->
+            <a-light type="ambient" color="#888888"></a-light>
+            <a-entity class="optimized-shadow-caster" light="type: directional;
+                    castShadow: true;
+                    intensity: 2.0;
+                    shadowCameraVisible: false;
+                    shadowCameraTop: 100;
+                    shadowCameraBottom: -100;
+                    shadowCameraLeft: -100;
+                    shadowCameraRight: 100;
+                    shadowCameraFar: 100;
+                    shadowMapHeight: 2048;
+                    shadowMapWidth: 2048;
+                    "
+            position="-20 20 20"></a-entity>
+            <a-sky id="background" src="#skybox-img1"></a-sky>
+
+        </a-entity>
+
+    </body>
+</html>
