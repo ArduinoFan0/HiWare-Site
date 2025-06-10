@@ -380,6 +380,10 @@
 
                             <a-asset-item id="dot-cursor" scale="0.5 0.5 0.5" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/models/dot-cursor.glb"></a-asset-item>
                             <img id="toes-img" src="/HiWare-Site/unmanaged_files/8bf577c9296b57e64b23f0e0165465c8da676510b3e48cd648395888025acba8/media_files/images/feet.png"></img>
+                            <audio id="jump" src="./sfx/jump.mp3"></audio>
+                            <audio id="thud" src="./sfx/land.mp3"></audio>
+                            <audio id="step" src="./sfx/footstep.mp3"></audio>
+                            <audio id="enter-debug" src="./sfx/entrdbug.mp3"></audio>
 
                         </a-assets>
                         <a-entity id="scene">
@@ -407,6 +411,14 @@
 
 
                         <a-entity id="rig" position="25 10 0" shadow="">
+                            <a-entity class="sounds">
+                                <a-entity class="jump" sound="src: #jump"></a-entity>
+                                <a-entity class="land" sound="src: #thud"></a-entity>
+                                <a-entity class="footstep" sound="src: #step"></a-entity>
+                                <a-entity class="enter-debug" sound="src: #enter-debug"></a-entity>
+
+                            </a-entity>
+
                             <a-entity id="rig-rotate">
                                 <a-entity
                                     meta-touch-controls="hand: left; model: false"

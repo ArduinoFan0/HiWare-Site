@@ -776,7 +776,7 @@ try:
             self.script_ids = []
             self.colliding_toes = False
             self.loading = False
-
+            self.sounds = self.rig.querySelector('.sounds')
 
             self.load_scripts()
 
@@ -879,7 +879,10 @@ try:
             head.object3D.scale.set(*head_scale)
 
             toes_graphic.object3D.scale.set(*toes_graphic_scale)
-
+        def playSound(self, sound:str):
+            self.sounds.querySelector(sound).components.sound.playSound()
+        def stopSound(self, sound:str):
+            self.sounds.querySelector(sound).components.sound.stopSound()
         async def update(self):
             if self.timers[0] < time.time():
                 self.timers[0] = time.time() + 2
@@ -908,6 +911,13 @@ try:
             self.x += min(max(self.x_velocity, -(not self.colliding_body_xn)), not self.colliding_body_xp)
             if self.colliding_feet:
                 self.y_velocity = max(self.y_velocity, 0)
+            if self.colliding_toes:
+                if abs(self.z_velocity) + abs(self.x_velocity) > 0.06:
+                    self.playSound('.footstep')
+                else:
+                    self.stopSound('.footstep')
+            else:
+                self.stopSound('.footstep')
             gizmo_scale = self.rjy * 0.75 + 1.25
             gizmo_scale /= 2
             transformation_multiplier = self.rjy * 0.9 + 1
@@ -1206,6 +1216,8 @@ try:
             d = bool('d' in keys_pressed)
             if 'i' in keys_pressed:
                 vr_player.debug_mode = not vr_player.debug_mode
+                if vr_player.debug_mode:
+                    vr_player.playSound('.enter-debug')
             if vr_player.debug_mode:
                 if 'o' in keys_pressed:
                     vr_player.rotation += 15
@@ -1245,9 +1257,10 @@ try:
         try:
             if event.key == ' ':
                 vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
+                vr_player.playSound('.jump')
         except AttributeError:
             vr_player.y_velocity = math.sqrt(2 * vr_player.output_gravity * vr_player.jump_height)
-
+            vr_player.playSound('.jump')
 
     @when('keydown', '*')
     async def key_pressed(event):
@@ -1283,6 +1296,7 @@ try:
 
                 vr_player.colliding_objects['toes'].append(event.detail.withEl.id)
                 if len(vr_player.colliding_objects['toes']) != 0:
+                    vr_player.playSound('.land')
                     vr_player.colliding_toes = True
         else:
             match event.target.id:

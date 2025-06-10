@@ -37,9 +37,9 @@ class Module:
             <!-- Lighting -->
             <a-light type="ambient" color="#ffffff"></a-light>
             <!-- Axis Spheres (XYZ markers) -->
-            <a-entity position="0 1.5 2" id="level-goal">
-
-            </a-entity>
+            <a-gltf-model position="0 2.8 -1" animation-mixer="" src="#coin">
+            </a-gltf-model>
+            <a-entity id="level-goal" position="0 1.5 -1"></a-entity>
             <a-sky id="background" src="#skybox-img"></a-sky>
 
         </a-entity>
