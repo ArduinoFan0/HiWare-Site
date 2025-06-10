@@ -409,13 +409,11 @@
                         <a-entity id="rig" position="25 10 0" shadow="">
                             <a-entity id="rig-rotate">
                                 <a-entity
-                                    hand-tracking-controls="hand: left; modelOpacity: 0.0;" meta-touch-controls="hand: left; model: false"
+                                    meta-touch-controls="hand: left; model: false"
                                     thumbstick-logging
                                     py-thumbstickmoved="vr_joystick"
                                     py-triggerdown="vr_ltrigger"
-                                    py-pinchstarted="vr_ltrigger"
                                     py-triggerup="vr_luntrigger"
-                                    py-pinchended="vr_luntrigger"
                                     py-ybuttondown="vr_y_down"
                                     py-xbuttondown="vr_x_down"
                                 >
@@ -450,16 +448,13 @@
                                     </a-gltf-model>
                                 </a-entity>
                                 <a-entity
-                                        hand-tracking-controls="hand: right; modelOpacity: 0.0;" meta-touch-controls="hand: right; model: false"
+                                        meta-touch-controls="hand: right; model: false"
                                         rotation="0 0 0"
                                         thumbstick-logging
                                         py-abuttondown="vr_rise"
                                         py-thumbstickmoved="vr_look"
-                                        py-pinchstarted="vr_trigger"
                                         py-triggerdown="vr_trigger"
-                                        py-pinchended="vr_untrigger"
                                         py-triggerup="vr_untrigger"
-
                                 >
                                     <a-gltf-model class="hands" scale="0.9 0.9 0.9" src="#c-right" rotation="0 0 0"></a-gltf-model>
                                     <a-entity position="0 0 -0.5" id="gizmo-anchor"></a-entity>
