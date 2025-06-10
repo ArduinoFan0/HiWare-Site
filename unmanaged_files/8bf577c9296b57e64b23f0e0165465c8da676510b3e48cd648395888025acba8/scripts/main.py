@@ -785,6 +785,8 @@ try:
             for script in scripts:
                 if not script.type == 'custom-python':
                     continue
+                if not script.hasAttribute('id'):
+                    script.setAttribute('id', generate_uid())
                 exec(script.innerText, globals())
                 self.script_ids.append(script.id)
                 globals()[self.script_ids[-1]] = Module()

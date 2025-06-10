@@ -37,10 +37,6 @@ class Module:
         self.entity = vr_player.playfield.querySelector('#moving-plats1')
     def __main__(self):
         self.entity.object3D.scale.set(math.sin(time.time()), 1, 1)
-        #try:
-            #self.entity.object3D.scale.set(math.sin(time.time()), 1, 1)
-        #except AttributeError:
-            #pass
                 </script>
             </a-entity>
 
